@@ -63,7 +63,10 @@ This exercise consists in running an MPI microbenchmark in order to examine the 
 - <code> make </code>
 
 
-#### OSU MPI Bandwidth Test v5.6.2
+<table>
+<tr><th>OSU MPI Bandwidth Test v5.6.2 </th><th># OSU MPI Latency Test v5.6.2</th></tr>
+<tr><td>
+
 |Size                       |Bandwidth (MB/s)           |
 |---------------------------|---------------------------|
 |1                          |4.94                       |   
@@ -83,3 +86,34 @@ This exercise consists in running an MPI microbenchmark in order to examine the 
 |16384                      |2741.08                    |
 |32768                      |3753.49                    |
 
+
+</td><td>
+
+| Size                      | Latency (us)              | 
+|---------------------------|---------------------------|
+|0                          |0.54                       |
+|1                          |0.61                       |
+|2                          |0.60                       |
+|4                          |0.69                       |
+|8                          |0.69                       |
+|16                         |0.80                       |
+|32                         |0.81                       |
+|64                         |0.83                       |
+|128                        |1.07                       |
+|256                        |1.31                       |
+|512                        |0.87                       |
+|1024                       |1.98                       |
+|2048                       |4.62                       |
+|4096                       |4.96                       |
+|8192                       |5.90                       |
+|16384                      |6.61                       |
+|32768                      |9.38                       |
+|131072                     |25.91                      |
+|65536                      |14.98                      |
+|262144                     |48.33                      |
+|524288                     |91.88                      |
+|1048576                    |179.93                     |
+|2097152                    |1304.18                    |
+|4194304                    |2927.11                    |
+
+</td></tr> </table>
