@@ -27,7 +27,9 @@ Handl Philip, Buchauer Manuel, De Sclavis Davide
 #$ -j yes
 # Specify parallel environment (list available ones with qconf –spl) 
 #$ -pe openmpi-2perhost 8
-/bin/hostname
+
+module load openmpi/3.1.1
+mpiexec –n 8 /bin/hostname
 </code></pre>
 
 #### In your opionion, what are the 5 most important parameters available when submitting a job and why? What are possible settings of these parameters, and what effect do they have?
