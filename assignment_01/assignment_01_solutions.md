@@ -44,3 +44,22 @@ This line means: Set up a parallel environment with 2 CPU/cores per node and in 
 
 To actually start the program in parallel, the  `mpiexec -n 8 /path/to/application` command is needed. 
 The `-n` flag is set to 8, which executes the command/program 8 times (i.e. starts 8 processes).
+
+
+## Exercise 2
+
+This exercise consists in running an MPI microbenchmark in order to examine the impact of HPC topologies on performance.
+
+### Tasks
+
+#### Download and build the OSU Micro-Benchmarks
+
+- First of all we created a new folder with the name benchmark. 
+- Then we downloaded the benchmark with:
+<code>wget http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-5.6.2.tar.gz</code>
+- Then we unzipped the folder using: <code>tar -zxvf osu-micro-benchmarks-5.6.2.tar.gz</code> 
+- Afterward we loaded openmpi: <code>module load openmpi/3.1.1 </code> 
+- <code> ./configure CC=mpicc CXX=mpic++ </code>
+- <code> make </code>
+
+
