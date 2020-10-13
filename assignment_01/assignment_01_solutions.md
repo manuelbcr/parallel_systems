@@ -31,4 +31,9 @@ Handl Philip, Buchauer Manuel, De Sclavis Davide
 </code></pre>
 
 #### In your opionion, what are the 5 most important parameters available when submitting a job and why? What are possible settings of these parameters, and what effect do they have?
+1. <code>-q queuename</code> to submit job to specefic queue
+2. <code>-pe</code> to specify a parallel environment and the number of processes/threads (= SGE slots) on which your parallel (MPI/OpenMP) application should run
+3. <code>-N</code> to name a job.. default is the filename of the script.
+4. <code>-w</code> to check whether the syntax of the job is okay
+5. <code>-cwd</code> to execute job in current working directory (If you omit this option, your job will execute in $HOME, which is usually a bad idea. Input/output file names are relative to this directory)
 #### How do you run your program in parallel? What environment setup is required?
