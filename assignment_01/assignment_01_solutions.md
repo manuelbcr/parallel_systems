@@ -42,5 +42,5 @@ mpiexec –n 8 /bin/hostname
 With the line  <code>#$ -pe openmpi-2perhost 8 </code>in the job script a parallel environment is set up.  
 This line means: Set up a parallel environment with 2 CPU/cores per node and in total 8 cores. This means in total 4 nodes with 2 cores each are needed to get to the 8 cores in total.
 
-To actually start the program in parallel, the  `mpiexec -n 8 <script_file>` command is needed. 
+To actually start the program in parallel, the  `mpiexec -n 8 /path/to/application` command is needed. 
 The `-n` flag is set to 8, which executes the command/program 8 times (i.e. starts 8 processes).
