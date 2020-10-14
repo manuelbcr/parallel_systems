@@ -63,6 +63,15 @@ This exercise consists in running an MPI microbenchmark in order to examine the 
 - <code> make </code>
 
 
+#### After building, submit SGE jobs that run the `osu_latency` and `osu_bw` executables.
+For submitting the jobs we used the job.script in the benchmark directory one time with the `osu_latency` and one time 
+with the `osu_bw`. Both were running on 2 CPUs/cores per node with 2 cores in total which we demanded with the command 
+`openmpi-2perhost 2`. And with `mpiexec -n 2` we started the two processes.
+
+
+#### Create a table and figures that illustrate the measured data and study them. What effects can you observe?
+
+Running those two programs results in the following table.
 <table>
 <tr><th>OSU MPI Bandwidth Test v5.6.2 </th><th># OSU MPI Latency Test v5.6.2</th></tr>
 <tr><td>
@@ -117,3 +126,5 @@ This exercise consists in running an MPI microbenchmark in order to examine the 
 |4194304                    |2927.11                    |
 
 </td></tr> </table>
+
+
