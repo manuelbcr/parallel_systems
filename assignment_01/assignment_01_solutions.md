@@ -128,3 +128,4 @@ Running those two programs results in the following table.
 </td></tr> </table>
 
 
+<img src="./Benchmark/Bandwithtest.png" height="200"> <img src="./Benchmark/Latencytest.png" height="200"> <br/>
