@@ -189,3 +189,6 @@ Running those two programs results in the following table.
 | 1048576 | 174.27                      | 176.54                 | 698.49               |
 | 2097152 | 1295.37                     | 368.46                 | 1378.13              |
 | 4194304 | 2908.69                     | 2589.86                | 2737.34              |
+
+<img src="./Benchmark/Bandwithtest_experiment.png" width="600"> 
+<img src="./Benchmark/Latencytest_experiment.png" width="600"> <br/>
