@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#$ -q std.q
+#$ -cwd
+#$ -N osu_lat_2_cores_1_socket
+#$ -o output.dat
+#$ -j yes
+#$ -pe openmpi-2perhost 2
+
+module load openmpi/3.1.1
+
+mpiexec -n 2 -map-by ppr:2:socket ./mpi/pt2pt/osu_latency
