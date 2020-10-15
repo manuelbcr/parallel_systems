@@ -51,11 +51,21 @@ n003.intern.lcc2
 </pre>
 
 #### In your opionion, what are the 5 most important parameters available when submitting a job and why? What are possible settings of these parameters, and what effect do they have?
-1. <code>-q queuename</code> to submit job to specefic queue
-2. <code>-pe</code> to specify a parallel environment and the number of processes/threads (= SGE slots) on which your parallel (MPI/OpenMP) application should run
-3. <code>-N</code> to name a job.. default is the filename of the script.
-4. <code>-w</code> to check whether the syntax of the job is okay
-5. <code>-cwd</code> to execute job in current working directory (If you omit this option, your job will execute in $HOME, which is usually a bad idea. Input/output file names are relative to this directory)
+1. <code>-q queuename</code>: This parameter is used to submit a job to a specific queue. All available queues can be shown by running `qconf -sql`. The default queue that is used if this parameter is not explicitly set is `std.q`.
+2. <code>-pe parallel-env num-of-slots</code>: With the help of `-pe` it is possible to define a parallel environment (`parallel-env`) which is MPI in our case and how many slots should be reserved (`num-of-slots`). It is important to mention that the cores are just reserved for the job and the program has to make sure on its own that they are really used. If this parameter is left out the job is executed sequentially.
+3. <code>-N jobname</code>: In the default case the filename of the script is also the jobname. With `-N` it is possible to rename it to maybe something more expressive.
+4. <code>-w e|w|n|p|v</code>: This parameter can be used to validate a submission script. If `-w` is used in combination with `e` it is rejected if errors are found, `w` outputs only a warning but won't reject the whole script, `n` turns off the validation, `p` stands for poke and prints a validation report and `v` does only the verification but does not submit the job.  
+5. <code>-cwd</code>: to execute job in current working directory. If this option is omitted, the job will executed in $HOME, however, usually we want to execute it in the current directory since input & output file names are relative to this directory.
+
+A sample application of those parameters if they are set in the submission script is given below:
+<pre><code>
+#$ -q std.q
+#$ -pe openmpi-2perhost 8
+#$ -N world_saviors
+#$ -w p
+#$ -cwd
+</code></pre>
+
 #### How do you run your program in parallel? What environment setup is required?
 With the line  <code>#$ -pe openmpi-2perhost 8 </code>in the job script a parallel environment is set up.  
 This line means: Set up a parallel environment with 2 CPU/cores per node and in total 8 cores. This means in total 4 nodes with 2 cores each are needed to get to the 8 cores in total.
