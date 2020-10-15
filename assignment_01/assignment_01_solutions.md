@@ -8,29 +8,33 @@ Handl Philip, Buchauer Manuel, De Sclavis Davide
 #### Study how to submit jobs in SGE, how to check their state and how to cancel them.
 
 - <code>qsub name_of_script</code> is used to submit jobs where name_of_script represents the path to  a simple shell script containing the commands to be run on the remote cluster nodes.
-- <code>qstat</code> to get information about running or waiting jobs 
-- <code>qdel job-id</code> to delete a job (terminates application, frees up resources)
+For instance if a script called `save_the_world.sh` should be executed the following command has to be ran: <code>qsub save_the_world.sh</code> 
+- <code>qstat</code> to get information about running or waiting jobs, e.g. when the job was started, its current state, its ID or its name.  
+- <code>qdel job-id</code> to delete a running job. This terminates the job and frees up acquired resources.
 
 
 #### Prepare a submission script that starts an arbitrary executable, e.g. `/bin/hostname`
+You can find this code also in the file: `save_the_world.sh`
+
 <pre><code>#!/bin/bash
-# Execute job in the queue "std.q" unless you have special requirements. 
+
 #$ -q std.q
-# The batch system should use the current directory as working directory. 
 #$ -cwd
-# Name your job. Unless you use the -o and -e options, output will 
-# go to a unique file name.o<job_id> for each job.
-#$ -N my_test_job
-# Redirect output stream to this file.
+#$ -N world_saviors
 #$ -o output.dat
-# Join the error stream to the output stream.
 #$ -j yes
-# Specify parallel environment (list available ones with qconf –spl) 
 #$ -pe openmpi-2perhost 8
 
+echo "We are going to save the world!"
+
 module load openmpi/3.1.1
-mpiexec –n 8 /bin/hostname
+mpiexec -n 8 /bin/hostname
+
+echo "...ok, or at least to execute /bin/hostname"
+
 </code></pre>
+
+After running this script an output similar to the following one should be found in `output.dat`
 
 #### In your opionion, what are the 5 most important parameters available when submitting a job and why? What are possible settings of these parameters, and what effect do they have?
 1. <code>-q queuename</code> to submit job to specefic queue
