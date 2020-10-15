@@ -34,7 +34,21 @@ echo "...ok, or at least to execute /bin/hostname"
 
 </code></pre>
 
-After running this script an output similar to the following one should be found in `output.dat`
+After running this script an output similar to the following one should be found in `output.dat`:
+
+<pre>
+We are going to save the world!
+  Loading openmpi/3.1.1 for compiler gnu-4.8.5
+n002.intern.lcc2
+n002.intern.lcc2
+n004.intern.lcc2
+n005.intern.lcc2
+n003.intern.lcc2
+n004.intern.lcc2
+n005.intern.lcc2
+n003.intern.lcc2
+...ok, or at least to execute /bin/hostname
+</pre>
 
 #### In your opionion, what are the 5 most important parameters available when submitting a job and why? What are possible settings of these parameters, and what effect do they have?
 1. <code>-q queuename</code> to submit job to specefic queue
