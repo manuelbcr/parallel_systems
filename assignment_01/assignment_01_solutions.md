@@ -147,7 +147,7 @@ As it can be seen in the visualization of the resulting table, the latency incre
 - different sockets of the same node, and
 - different nodes.
 
-
+#### Amend your table and figures to include these additional measurements.
 
 | Size    | Bandwith(Mb/s) - 2cores1socket | Bandwith(Mb/s) - 2sockets | Bandwith(Mb/s) - 2nodes |
 |---------|--------------------------------|---------------------------|-------------------------|
@@ -201,6 +201,9 @@ As it can be seen in the visualization of the resulting table, the latency incre
 | 1048576 | 174.27                      | 176.54                 | 698.49               |
 | 2097152 | 1295.37                     | 368.46                 | 1378.13              |
 | 4194304 | 2908.69                     | 2589.86                | 2737.34              |
+
+#### What effects can you observe? How can you verify rank placement without looking at performance?
+As expected the latency between two cores of the same node is smaller than between two nodes. The bandwith in opposite, is bigger with two cores of the same node than with two seperate nodes. However both the bandwith and the latency of two cores of the same node, approach the values of two separate nodes the bigger the message size gets. What also can be observed is that values of same socket and different sockets are nearly the same both for the bandwith and the latency.
 
 <img src="./Benchmark/Bandwithtest_experiment.png" width="1000"> 
 <img src="./Benchmark/Latencytest_experiment.png" width="1000"> <br/>
