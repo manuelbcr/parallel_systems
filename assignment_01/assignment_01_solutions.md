@@ -94,6 +94,7 @@ This exercise consists in running an MPI microbenchmark in order to examine the 
 - <code> ./configure CC=mpicc CXX=mpic++ </code>
 - <code> make </code>
 
+For preparing this task as we did the following script can be ran: prepare_task2.sh
 
 #### After building, submit SGE jobs that run the `osu_latency` and `osu_bw` executables.
 For submitting the jobs we used the job.script in the benchmark directory one time with the `osu_latency` and one time 
