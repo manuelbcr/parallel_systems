@@ -138,6 +138,7 @@ Running those two programs results in the following table.
 The graphic from above shows the bandwith benchmark for 2 CPUs/cores per node. On short message sizes up to 1024 Bytes we see an increase in the Bandwith up to around 2500 MB/s. After a short dip in bandwidth performance at a message size of 2048 - 4096 Bytes, the bandwidth increases up to nearly 6000 MB/s. At a message Size of around 4 MB the bandwidth drops down to 1600 MB/s.   
 
 <img src="./Benchmark/Latencytest.png" width="1000"> 
+As it can be seen in the visualization of the resulting table, the latency increases continuently. However what also can be observed is that the latency growth is steeper when the message size gets above about 1,3 Mb.
 
 
 
