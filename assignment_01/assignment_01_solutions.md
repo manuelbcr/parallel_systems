@@ -134,7 +134,18 @@ Running those two programs results in the following table.
 </td></tr> </table>
 
 
-<img src="./Benchmark/Bandwithtest.png" height="200"> <img src="./Benchmark/Latencytest.png" height="200"> <br/>
+<img src="./Benchmark/Bandwithtest.png" width="1000"> 
+The graphic from above shows the bandwith benchmark for 2 CPUs/cores per node. On short message sizes up to 1024 Bytes we see an increase in the Bandwith up to around 2500 MB/s. After a short dip in bandwidth performance at a message size of 2048 - 4096 Bytes, the bandwidth increases up to nearly 6000 MB/s. At a message Size of around 4 MB the bandwidth drops down to 1600 MB/s.   
+
+<img src="./Benchmark/Latencytest.png" width="1000"> 
+
+
+
+#### Modify your experiment such that the 2 MPI ranks are placed on
+- different cores of the same socket,
+- different sockets of the same node, and
+- different nodes.
+
 
 
 | Size    | Bandwith(Mb/s) - 2cores1socket | Bandwith(Mb/s) - 2sockets | Bandwith(Mb/s) - 2nodes |
@@ -190,5 +201,5 @@ Running those two programs results in the following table.
 | 2097152 | 1295.37                     | 368.46                 | 1378.13              |
 | 4194304 | 2908.69                     | 2589.86                | 2737.34              |
 
-<img src="./Benchmark/Bandwithtest_experiment.png" width="600"> 
-<img src="./Benchmark/Latencytest_experiment.png" width="600"> <br/>
+<img src="./Benchmark/Bandwithtest_experiment.png" width="1000"> 
+<img src="./Benchmark/Latencytest_experiment.png" width="1000"> <br/>
