@@ -68,7 +68,7 @@ A sample application of those parameters if they are set in the submission scrip
 
 #### How do you run your program in parallel? What environment setup is required?
 In order to run a program in parallel multiple nodes must be available where a message passing library like openmpi 
-can be ran. The with the parameter `-pe` a parallel environment can be configured. In our case we can define
+can be run. With the parameter `-pe` a parallel environment can be configured. In our case we can define
 something like `-pe openmpi-Xperhost Y`. This means that `X` slots per node are reserved and in total `Y` slots are
 acquired. As a result `Y` has to be a multiple of `X`.
 
@@ -94,7 +94,7 @@ This exercise consists in running an MPI microbenchmark in order to examine the 
 - <code> ./configure CC=mpicc CXX=mpic++ </code>
 - <code> make </code>
 
-For preparing this task as we did the following script can be ran: prepare_task2.sh
+For preparing this task, as we did, the following script can be run: prepare_task2.sh
 
 #### After building, submit SGE jobs that run the `osu_latency` and `osu_bw` executables.
 For submitting the jobs we used the job.script in the benchmark directory one time with the `osu_latency` and one time 
@@ -250,3 +250,9 @@ As expected the latency between two cores of the same node is smaller than betwe
 
 <img src="./Benchmark/Bandwithtest_experiment.png" width="1000"> 
 <img src="./Benchmark/Latencytest_experiment.png" width="1000"> <br/>
+
+#### How stable are the measurements when running the experiments multiple times?
+
+
+<img src="./Benchmark/Bandwidth_2cores1socket_multiple_times.png" width="1000"> 
+<img src="./Benchmark/Latency_2cores1socket_multiple_times.png" width="1000"> <br/>
