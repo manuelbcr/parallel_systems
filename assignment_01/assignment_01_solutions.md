@@ -253,6 +253,10 @@ As expected the latency between two cores of the same node is smaller than betwe
 
 #### How stable are the measurements when running the experiments multiple times?
 
+##### 2cores
+<img src="./Benchmark/Bandwidth2coresMultiple.png" width="1000"> 
+<img src="./Benchmark/Latency2coresMultiple.png" width="1000"> <br/>
+
 ##### 2cores1socket
 Slight differences are recognisable in both bandwidth and latency. The bandwidth goes down after multiple executions wheras the latency goes up slightly.
 <img src="./Benchmark/Bandwidth_2cores1socket_multiple_times.png" width="1000"> 
@@ -261,4 +265,6 @@ Slight differences are recognisable in both bandwidth and latency. The bandwidth
 ##### 2nodes
 
 There is no difference recognisable. 
+<img src="./Benchmark/Bandwidth2nodesMultiple.png" width="1000">
 <img src="./Benchmark/Latency_2nodes_multiple_times.png" width="1000"> <br/>
+
