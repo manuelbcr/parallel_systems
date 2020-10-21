@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[]){
 
-    long iterations = 0;
+    unsigned long nr_samples = 0;
     long num_circle_pts = 0;
     long num_all_pts = 0;
 
@@ -17,11 +17,11 @@ int main(int argc, char *argv[]){
     if(argc == 2){
 
         // string to long(string, endpointer, base)
-        iterations = strtol(argv[1], NULL, 10);
+        nr_samples = strtoul(argv[1], NULL, 10);
 
     } else {
 
-        printf("USAGE: ./pi_seq <Number of iterations>\n");
+        printf("USAGE: ./pi_seq <Number of samples>\n");
         return 1;
 
     }
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
     // current time as seed for random generator 
     srand(time(NULL));
 
-    for(int i = 0; i < iterations; i++){
+    for(unsigned long i = 0; i < nr_samples; i++){
 
         // random number between 0 and 1
         random_x = (double)rand() / RAND_MAX; 

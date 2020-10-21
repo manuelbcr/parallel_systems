@@ -30,4 +30,6 @@ and therefore we get:
 
 #### Implement your chosen parallelization strategy as a second application `pi_mpi`. Run it with varying numbers of ranks and sample sizes and verify its correctness by comparing the output to `pi_seq`.
 
+Before executing the Makefile load openmpi with: `module load openmpi/3.1.1`
+
 #### Discuss the effects and implications of your parallelization.
