@@ -38,7 +38,12 @@ int main(int argc, char *argv[]){
         // distance from origin -> pythagoras
         dist = random_x * random_x + random_y * random_y;
 
-        (dist <= 1) ? ++num_circle_pts : num_circle_pts;
+        if(dist <= 1){
+
+            num_circle_pts++;
+            
+        }
+
         num_all_pts = num_all_pts + 1;
 
         pi = 4 * ((double)num_circle_pts / (double)num_all_pts); 
