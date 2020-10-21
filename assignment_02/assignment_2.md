@@ -15,13 +15,16 @@ There are many ways of approximating π, one being a well-known Monte Carlo meth
 ### Tasks
 
 #### Write a sequential application `pi_seq` in C or C++ that computes π for a given number of samples (command line argument). Test your application for various, large sample sizes to verify the correctness of your implementation.
-We know that area of the square is 1 and the area of the circle is $\frac{\pi}{4}$
+We know that area of the square is 1 and the area of the circle is π/4.
 Now for a very large number of randomly created generated points we have:
-$$\frac{area of the circle}{area of the square} = \frac{number of points generated inside the circle}{total number of points generated or number of points generated inside the square }$$
 
-and therefore we get: 
 
-$$\Pi = 4* \frac{number of points generated inside the circle}{number of points generated inside the square}$$
+<img src="./pictures/formula1.png"> 
+
+and therefore we get:
+
+
+<img src="./pictures/formula2.png"> 
 
 #### Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why?
 
