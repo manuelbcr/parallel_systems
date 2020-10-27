@@ -14,7 +14,7 @@ There are many ways of approximating π, one being a well-known Monte Carlo meth
 
 ### Tasks
 
-#### Write a sequential application `pi_seq` in C or C++ that computes π for a given number of samples (command line argument). Test your application for various, large sample sizes to verify the correctness of your implementation.
+####  1) Write a sequential application `pi_seq` in C or C++ that computes π for a given number of samples (command line argument). Test your application for various, large sample sizes to verify the correctness of your implementation.
 We know that area of the square is 1 and the area of the circle is π/4.
 Now for a very large number of randomly created generated points we have:
 
@@ -26,10 +26,53 @@ and therefore we get:
 
 <img src="./pictures/formula2.png"> 
 
-#### Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why?
+| Samples                   | π (1)    | π (2)    | π (3)    | π (4)    | π (5)    | π (avg)    |      
+|---------------------------|----------|----------|----------|----------|----------|------------|
+|100                        |3.16      |3.2       |3.12      |3.16      |3.24      |3.176       |
+|1000                       |3.208     |3.148     |3.148     |3.136     |3.068     |3.1416      |
+|10000                      |3.15      |3.1208    |3.1168    |3.1168    |3.1416    |3.1292      |
+|100000                     |3.13928   |3.14852   |3.14852   |3.13764   |3.13404   |3.1416      |
+|1000000                    |3.141036  |3.139284  |3.139284  |3.143072  |3.143916  |3,1413184   |
+|10000000                   |3.141859  |3.142368  |3.141154  |3.141900  |3.141432  |3,1417426   |
+|100000000                  |3.141764  |3.141686  |3.141353  |3.141532  |3.141575  |3,141582    |
+|200000000                  |3.141511  |3.141649  |3.141418  |3.141551  |3.141510  |3,1415278   |
+|400000000                  |3.141519  |3.141510  |3.141641  |3.141601  |3.141594  |3,141573    |
+|800000000                  |3.141500  |3.141670  |3.141576  |3.141597  |3.141631  |3,1415948   |
 
-#### Implement your chosen parallelization strategy as a second application `pi_mpi`. Run it with varying numbers of ranks and sample sizes and verify its correctness by comparing the output to `pi_seq`.
+The values computed by the program is approximating π and therefore we expect our algorithm to work properly.
+
+
+We have in addition also measured the execution time of the sequential program and got following average execution times:
+
+| Samples                   | average execution times  |
+|---------------------------|--------------------------|
+|100                        |too less accuracy         |
+|1000                       |too less accuracy         |
+|10000                      |too less accuracy         |
+|100000                     |too less accuracy         |
+|1000000                    |0.04                      |
+|10000000                   |0.41                      |
+|100000000                  |4.23                      |
+|200000000                  |10.87                     |
+|400000000                  |17.71                     |
+|800000000                  |34.37                     |
+
+As we can obtain from this table the time complexity is as expected O(n).
+
+#### 2) Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why?
+
+For this task it is necessary to create as many random points as possible to rise the accuracy. Since it does not matter
+in which order they were generated and they do not depend on each other the number of samples N can simply be divided into the number of 
+available ranks R and each rank simply generates N/R points and check whether they are in- or outliers. The resulting subresults = ratios
+of in- and outliers are finally combined by computing π as defined in the formula above.
+
+#### 3) Implement your chosen parallelization strategy as a second application `pi_mpi`. Run it with varying numbers of ranks and sample sizes and verify its correctness by comparing the output to `pi_seq`.
 
 Before executing the Makefile load openmpi with: `module load openmpi/3.1.1`
 
-#### Discuss the effects and implications of your parallelization.
+[TODO] execute pi_mpi severaltimes
+
+#### 4) Discuss the effects and implications of your parallelization.
+
+
+
