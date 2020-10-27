@@ -1,3 +1,8 @@
 
 .idea/
 .DS_Store
+
+*.zip
+
+/assignment_02/ex01/pi_seq
+/assignment_02/ex01/pi_mpi
