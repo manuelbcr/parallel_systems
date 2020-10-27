@@ -7,6 +7,9 @@ const char USAGE_MSG[] = "USAGE: ./pi_seq <Number of samples>\n";
 
 int main(int argc, char *argv[]){
 
+    // start timer
+    clock_t start_execution_time = clock();
+
     unsigned long nr_samples = 0;
     long num_circle_pts = 0;
     long num_all_pts = 0;
@@ -56,7 +59,9 @@ int main(int argc, char *argv[]){
         pi = 4 * ((double)num_circle_pts / (double)num_all_pts); 
     }
     
-    printf("Calculated pi with %ld iterations: %lf\n", nr_samples, pi);
+    double execution_time = (double)(clock() - start_execution_time) / CLOCKS_PER_SEC;
+
+    printf("Calculated pi with %ld iterations: %lf (in %f seconds)\n", nr_samples, pi, execution_time);
 
     return 0;
     
