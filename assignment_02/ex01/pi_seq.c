@@ -55,8 +55,8 @@ int main(int argc, char *argv[]){
 
         pi = 4 * ((double)num_circle_pts / (double)num_all_pts); 
     }
-    long iterations = 100;
-    printf("callculated pi with %ld iterations: %lf\n", iterations, pi);
+    
+    printf("Calculated pi with %ld iterations: %lf\n", nr_samples, pi);
 
     return 0;
     
