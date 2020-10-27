@@ -3,6 +3,8 @@
 #include <math.h>
 #include <time.h>
 
+const char USAGE_MSG[] = "USAGE: ./pi_seq <Number of samples>\n";
+
 int main(int argc, char *argv[]){
 
     unsigned long nr_samples = 0;
@@ -18,12 +20,17 @@ int main(int argc, char *argv[]){
 
         // string to long(string, endpointer, base)
         nr_samples = strtoul(argv[1], NULL, 10);
+        
+        // check for meaningful input
+        if(nr_samples <= 0){
+            printf("Number of samples has to be an integer and bigger than 0.\n");    
+            printf(USAGE_MSG);   
+            return 1; 
+        }        
 
     } else {
-
-        printf("USAGE: ./pi_seq <Number of samples>\n");
+        printf(USAGE_MSG);
         return 1;
-
     }
 
     // current time as seed for random generator 
@@ -48,7 +55,7 @@ int main(int argc, char *argv[]){
 
         pi = 4 * ((double)num_circle_pts / (double)num_all_pts); 
     }
-
+    long iterations = 100;
     printf("callculated pi with %ld iterations: %lf\n", iterations, pi);
 
     return 0;
