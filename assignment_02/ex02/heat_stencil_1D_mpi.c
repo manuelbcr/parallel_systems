@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <mpi.h>
 
 typedef double value_t;
 
@@ -16,7 +17,7 @@ void releaseVector(Vector m);
 void printTemperature(Vector m, int N);
 
 // -- simulation code ---
-
+// -- MPI version for heat stencil ---
 int main(int argc, char **argv) {
   // 'parsing' optional input parameter = problem size
   int N = 2000;
@@ -27,7 +28,6 @@ int main(int argc, char **argv) {
   printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
   // ---------- setup ----------
-
   // create a buffer for storing temperature fields
   Vector A = createVector(N);
 
@@ -44,8 +44,14 @@ int main(int argc, char **argv) {
   printTemperature(A, N);
   printf("\n");
 
-  // ---------- compute ----------
+  // initialize parallelization
+  int rank, size;
 
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+  // ---------- compute ----------
   // create a second buffer for the computation
   Vector B = createVector(N);
 
@@ -77,7 +83,7 @@ int main(int argc, char **argv) {
 
     // show intermediate step
     if (!(t % 1000)) {
-      printf("Step t=%d:\t", t);
+      printf("RANK(%d)::Step t=%d:\t", t, rank);
       printTemperature(A, N);
       printf("\n");
     }

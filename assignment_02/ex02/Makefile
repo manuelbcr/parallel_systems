@@ -1,12 +1,18 @@
-
-CC=gcc
+CC= mpicc
+GCC=gcc
 CC_FLAGS=-O2 -std=c99 -Wall -Wextra -pedantic
 
 .PHONEY: all
-all: heat_stencil_1D_seq
+all: heat_stencil_1D_seq heat_stencil_1D_mpi
 
 heat_stencil_1D_seq: heat_stencil_1D_seq.c
-	@$(CC) $(CC_FLAGS) $< -o heat_stencil_1D_seq
+	@$(GCC) $(CC_FLAGS) $< -o heat_stencil_1D_seq
+
+heat_stencil_1D_mpi: heat_stencil_1D_mpi.c
+	@$(CC) $(CC_FLAGS) $< -o heat_stencil_1D_mpi
+
+test: test_mpi.c
+	@$(CC) $(CC_FLAGS) $< -o test
 
 .PHONEY: clean
 clean:
