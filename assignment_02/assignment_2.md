@@ -94,7 +94,7 @@ Then a heatsource is added with 60°C (333K) at position N/4 which means at the 
 
 Now, when the system is initialized the iterations can start. For each timestep for each cell the new temperature is calculated by adding 10% of the difference to its left and its right neighbour. The values are temporarily stored in a second array B. After finishing all the temperature updates the new vector B replaces the values of A.
 
-This is repeated as long as the timesteps limit T is not reached.
+This is repeated as long as the timesteps limit T is not reached. At the end a check is done if all cell values are between 273K - 333K. 
 
 
 #### 2) Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why? Are there additional changes required in the code beyond calling MPI functions? If so, elaborate!
