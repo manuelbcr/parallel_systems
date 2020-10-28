@@ -63,8 +63,8 @@ As we can obtain from this table the time complexity is as expected O(n).
 
 For this task it is necessary to create as many random points as possible to rise the accuracy. Since it does not matter
 in which order they were generated and they do not depend on each other the number of samples N can simply be divided into the number of 
-available ranks R and each rank simply generates N/R points and check whether they are in- or outliers. The resulting subresults = ratios
-of in- and outliers are finally combined by computing π as defined in the formula above.
+available ranks R and each rank simply generates N/R points and check whether they are in- or outliers. The resulting subresults = number of inliers are reduced by summing them up by one root node. So as a communication pattern "reduction to one" is used because we only need one result. This means, not all 
+nodes require all subresults. "Gathering to one" would be possible but is a worse strategy because summing the intermediate results up can be made directly and not by the root node programmatically on our own.
 
 #### 3) Implement your chosen parallelization strategy as a second application `pi_mpi`. Run it with varying numbers of ranks and sample sizes and verify its correctness by comparing the output to `pi_seq`.
 

@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
     printf("Number of points in circle of rank %d: [%ld/%ld]\n", rank, local_nr_circle_pts, (nr_samples/size));
 
     unsigned long global_nr_circle_pts = 0;
-    // int int MPI_Reduce(const void* sendbuf, void* recvbuf, int count, MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm)
+    // int MPI_Reduce(const void* sendbuf, void* recvbuf, int count, MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm)
     // be careful with floating point types -> therefore number of points in circle
     MPI_Reduce(&local_nr_circle_pts, &global_nr_circle_pts, 1, MPI_UNSIGNED_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
 
