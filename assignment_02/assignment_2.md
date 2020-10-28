@@ -1,5 +1,5 @@
 # Assignment 2, due November 9th 2020
-Handl Philip, Buchauer Manuel, De Sclavis Davide
+Buchauer Manuel, De Sclavis Davide, Handl Philip 
 
 
 ## Exercise 1
