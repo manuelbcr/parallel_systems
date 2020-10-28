@@ -86,6 +86,16 @@ A large class of scientific applications are so-called stencil applications. The
 ### Tasks
 
 #### 1) A sequential implementation of a 1-D heat stencil is available in [heat_stencil_1D_seq.c](heat_stencil_1D/heat_stencil_1D_seq.c). Read the code and make sure you understand what happens. See the Wikipedia article on [Stencil Codes](https://en.wikipedia.org/wiki/Stencil_code) for more information.
+The sequential code is working in the following manner:
+
+In the first step the model is initialized by setting the number of cells N and the number of iterations (timesteps) T. There is in addition a vector A that holds all the current cell temperatures and is initialized by 0°C = 273K. 
+
+Then a heatsource is added with 60°C (333K) at position N/4 which means at the left quarter of our space.
+
+Now, when the system is initialized the iterations can start. For each timestep for each cell the new temperature is calculated by adding 10% of the difference to its left and its right neighbour. The values are temporarily stored in a second array B. After finishing all the temperature updates the new vector B replaces the values of A.
+
+This is repeated as long as the timesteps limit T is not reached.
+
 
 #### 2) Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why? Are there additional changes required in the code beyond calling MPI functions? If so, elaborate!
 
