@@ -75,4 +75,22 @@ Before executing the Makefile load openmpi with: `module load openmpi/3.1.1`
 #### 4) Discuss the effects and implications of your parallelization.
 
 
+## Exercise 2
 
+This exercise consists in parallelizing an application simulating the propagation of heat.
+
+### Description
+
+A large class of scientific applications are so-called stencil applications. These simulate time-dependent physical processes such as the propagation of heat or pressure in a given medium. The core of the simulation operates on a grid and updates each cell with information from its neighbor cells.
+
+### Tasks
+
+#### 1) A sequential implementation of a 1-D heat stencil is available in [heat_stencil_1D_seq.c](heat_stencil_1D/heat_stencil_1D_seq.c). Read the code and make sure you understand what happens. See the Wikipedia article on [Stencil Codes](https://en.wikipedia.org/wiki/Stencil_code) for more information.
+
+#### 2) Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why? Are there additional changes required in the code beyond calling MPI functions? If so, elaborate!
+
+
+#### 3) Implement your chosen parallelization strategy as a second application `heat_stencil_1D_mpi`. Run it with varying numbers of ranks and problem sizes and verify its correctness by comparing the output to `heat_stencil_1D_seq`.
+
+
+#### 4) Discuss the effects and implications of your parallelization.
