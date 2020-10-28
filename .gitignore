@@ -6,4 +6,7 @@
 
 /assignment_02/ex01/pi_seq
 /assignment_02/ex01/pi_mpi
+/assignment_02/ex02/heat_stencil_1D_seq
+/assignment_02/ex02/heat_stencil_1D_mpi
+
 output.dat
