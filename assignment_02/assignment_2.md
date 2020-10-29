@@ -99,8 +99,22 @@ This is repeated as long as the timesteps limit T is not reached. At the end a c
 
 #### 2) Consider a parallelization strategy using MPI. Which communication pattern(s) would you choose and why? Are there additional changes required in the code beyond calling MPI functions? If so, elaborate!
 
+In comparison to the previous exercise we have dependent data here. So the only thing we found that is parallelizable is the computation of 
+the new vector B.
+
+At the beginning of each timestep iteration computation the current A vector, containing the latest states of the cells, is "broadcasted" to all 
+nodes. Each node is then responsible for computing the heat stencil for the i-th subpart of A of size number_of_cells/number_of_ranks.
+
+After computing the subresults the root node is "gathering" all subresults and updates its A vector for the next iteration.
+
+
+In the code several changes were required.
+[TODO: list changes]
+
+
 
 #### 3) Implement your chosen parallelization strategy as a second application `heat_stencil_1D_mpi`. Run it with varying numbers of ranks and problem sizes and verify its correctness by comparing the output to `heat_stencil_1D_seq`.
 
 
 #### 4) Discuss the effects and implications of your parallelization.
+
