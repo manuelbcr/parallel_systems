@@ -30,7 +30,8 @@ int main(int argc, char **argv) {
 
   // initialize A with 273K
   for (int i = 0; i < N; i++) {
-    A[i] = 273; // temperature is 0° C everywhere (273 K)
+    //A[i] = 273; // temperature is 0° C everywhere (273 K)
+    A[i] = 0; // temperature is 0° C everywhere (273 K)
   }
 
   // setup of parallel part
@@ -61,10 +62,11 @@ int main(int argc, char **argv) {
   printf("I am rank #%d and I serve [%d, %d] from [0, %d]\n", rank, min_index, max_index, N-1);
  
   Vector sub_array = createVector(max_index-min_index);
-
+  for(int timestep=0; timestep<2; timestep++){
+  MPI_Bcast(A, N, MPI_DOUBLE, root_proc, MPI_COMM_WORLD);
    
   for(int i=0; i<max_index-min_index; i++){
-    sub_array[i] = i+rank*250;
+    sub_array[i] = A[i+displs[rank]]+rank;
   }
   
 
@@ -74,18 +76,19 @@ int main(int argc, char **argv) {
              A, receive_counts, displs, MPI_DOUBLE, 
              0, MPI_COMM_WORLD);
 
-  releaseVector(sub_array);
-
   // >>>>>>>> just debug printing
-  MPI_Barrier(MPI_COMM_WORLD);
+  //MPI_Barrier(MPI_COMM_WORLD);
   if(rank == root_proc){
     printf("[");
-    for(int i=0; i<N-1; i++){
+    for(int i=0; i<N; i++){
       printf("%f, ", A[i]);
     }
     printf("]");
   }
   // <<<<<<<<<<<<<<<<<<<<<<<<<<
+  }
+  releaseVector(sub_array);
+
 
   MPI_Finalize();
   releaseVector(A);
