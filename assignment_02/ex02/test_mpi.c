@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
   printf("I am rank #%d and I serve [%d, %d] from [0, %d]\n", rank, min_index, max_index, N-1);
  
   Vector sub_array = createVector(max_index-min_index);
-  for(int timestep=0; timestep<1050; timestep++){
+  for(int timestep=0; timestep<T; timestep++){
     MPI_Bcast(A, N, MPI_DOUBLE, root_proc, MPI_COMM_WORLD);
 
     int index_A = displs[rank];
@@ -80,6 +80,7 @@ int main(int argc, char **argv) {
 
       if (index_A == source_x) {
         sub_array[i] = A[source_x];
+        index_A++; 
         continue;
       }
 
@@ -104,7 +105,7 @@ int main(int argc, char **argv) {
                0, MPI_COMM_WORLD);
 
     if(rank == root_proc){
-      if (!(timestep % 50)) {
+      if (!(timestep % 1000)) {
         printf("Step t=%d:\t", timestep);
         printTemperature(A, N);
         printf("\n");
