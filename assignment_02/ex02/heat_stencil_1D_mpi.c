@@ -33,16 +33,12 @@ int main(int argc, char **argv) {
 
   // initialize A with 273K
   for (int i = 0; i < N; i++) {
-    A[i] = 273; // temperature is 0° C everywhere (273 K)
+    A[i] = 273; 
   }
 
   // and there is a heat source in one corner
   int source_x = N / 4;
   A[source_x] = 273 + 60;
-
-  
-  // create a second buffer for the computation
-  Vector B = createVector(N);
 
 
   // setup of parallel part
@@ -60,37 +56,48 @@ int main(int argc, char **argv) {
   // set displacement and receive-counts for each rank
   for(int i=0; i<size; i++){
     int min = (i*N)/size;
-    int max = (i == size-1) ? N-1 : (i+1)*N/size;
+    int max = (i == size-1) ? N : (i+1)*N/size;
+    //displs[i] = (i == 0) ? 0 : min+1;
     displs[i] = min;
-    receive_counts[i] = max-min;
+    receive_counts[i] = max-min+1;
   }
 
   // get min and max index of A for which current rank is responsible
   int min_index = (rank == root_proc) ? 0 : (rank*N)/size;
-  int max_index = (rank == size-1) ? N-1 : (rank+1)*N/size;
+  int max_index = (rank == size-1) ? N : (rank+1)*N/size;
 
   // --------- for debugging to get to know which rank is processing which subpart
   printf("I am rank #%d and I serve [%d, %d] from [0, %d]\n", rank, min_index, max_index, N-1);
  
+  if(rank == root_proc){
+    printf("Initial:\t");
+    printTemperature(A, N);
+    printf("\n");
+  }
+
+  // sub_array contains the subresult of each rank (similar to B) 
   Vector sub_array = createVector(max_index-min_index);
   for(int timestep=0; timestep<T; timestep++){
+    // Broadcast A such that all have same data again
     MPI_Bcast(A, N, MPI_DOUBLE, root_proc, MPI_COMM_WORLD);
 
+    // index_A contains corresponding index to i in A
+    // sub_array has range [0, max_index-min-index] <-> A has range [displs[rank], displs[rank]+max_index-min_index]
     int index_A = displs[rank];
     for(int i=0; i<max_index-min_index; i++){
-      
+
+      // heat source has always same heat
       if (index_A == source_x) {
         sub_array[i] = A[source_x];
         index_A++; 
         continue;
       }
 
-
       value_t tc = A[index_A];
 
       // get temperatures of adjacent cells
-      value_t tl = (i != 0) ? A[index_A - 1] : tc;
-      value_t tr = (i != N - 1) ? A[index_A + 1] : tc;
+      value_t tl = (index_A != 0) ? A[index_A - 1] : tc;
+      value_t tr = (index_A != N - 1) ? A[index_A + 1] : tc;
       
       // compute new temperature at current position
       sub_array[i] = tc + 0.2 * (tl + tr + (-2 * tc));
@@ -113,20 +120,36 @@ int main(int argc, char **argv) {
       }
     }
 
-  /* >>>>>>>> just debug printing
-  //MPI_Barrier(MPI_COMM_WORLD);
-  //if(rank == root_proc){
+  }
+
+  // final print
+  if(rank == root_proc){  
+    printf("Final:\t\t");
+    printTemperature(A, N);
+    printf("\n");
+
+    int success = 1;
+    for (long long i = 0; i < N; i++) {
+      value_t temp = A[i];
+      if (273 <= temp && temp <= 273 + 60)
+        continue;
+      success = 0;
+      break;
+    }
+
+    printf("Verification: %s\n", (success) ? "OK" : "FAILED");
+
     printf("[");
     for(int i=0; i<N; i++){
       printf("%f, ", A[i]);
     }
-    printf("]");
+    printf("]\n");
+
+
   }
-  // <<<<<<<<<<<<<<<<<<<<<<<<<<*/
-  }
+
+  // finalize by freeing vectors
   releaseVector(sub_array);
-
-
   MPI_Finalize();
   releaseVector(A);
 

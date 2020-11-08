@@ -10,5 +10,5 @@
 
 module load openmpi/3.1.1
 
-mpiexec -n 8 ./heat_stencil_1D_mpi 
+mpiexec -n 8 ./heat_stencil_1D_mpi 2000 
 
