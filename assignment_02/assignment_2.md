@@ -44,18 +44,18 @@ The values computed by the program is approximating π and therefore we expect o
 
 We have in addition also measured the execution time of the sequential program and got following average execution times:
 
-| Samples                   | average execution times  |
-|---------------------------|--------------------------|
-|100                        |too less accuracy         |
-|1000                       |too less accuracy         |
-|10000                      |too less accuracy         |
-|100000                     |too less accuracy         |
-|1000000                    |0.04                      |
-|10000000                   |0.41                      |
-|100000000                  |4.23                      |
-|200000000                  |10.87                     |
-|400000000                  |17.71                     |
-|800000000                  |34.37                     |
+| Samples                   | average execution times  | execution time (using script that swans only one process)|
+|---------------------------|--------------------------|----------------------------------------------------------|
+|100                        |too less accuracy         |too less accuracy                                         |
+|1000                       |too less accuracy         |too less accuracy                                         |
+|10000                      |too less accuracy         |too less accuracy                                         |
+|100000                     |too less accuracy         |too less accuracy                                         |
+|1000000                    |0.04                      |0.16                                                      |
+|10000000                   |0.41                      |1.14                                                      |
+|100000000                  |4.23                      |10.910                                                    |
+|200000000                  |10.87                     |21.76                                                     |
+|400000000                  |17.71                     |43.55                                                     |
+|800000000                  |34.37                     |86.89                                                     |
 
 As we can obtain from this table the time complexity is as expected O(n).
 
@@ -97,6 +97,7 @@ Before executing the Makefile load openmpi with: `module load openmpi/3.1.1`
 |800000000                  |43.9                                                 |22.04                                               |
 
 #### 4) Discuss the effects and implications of your parallelization.
+In the tables above it can be seen that the sequential approach is more accurate than the parallel one if the sample sizes are the same. In our opinion this is an effect of the random number generation which uses the current time as seed. Therefore some random numbers may be the same for different ranks and the results are not that good. However for big sample sizes the sequential program is no option because of the time it takes. Interestingly the execution time of the sequential program using a job script which spawns a single process takes way more time than the execution via the command line.
 
 
 ## Exercise 2
