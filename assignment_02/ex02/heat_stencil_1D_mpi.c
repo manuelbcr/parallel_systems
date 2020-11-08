@@ -24,8 +24,11 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     N = atoi(argv[1]);
   }
+
+  // set number of time steps 
   int T = N * 500;
 
+  // create vector of N elements as a field 
   Vector A = createVector(N);
 
   // initialize A with 273K
@@ -66,7 +69,7 @@ int main(int argc, char **argv) {
   int min_index = (rank == root_proc) ? 0 : (rank*N)/size;
   int max_index = (rank == size-1) ? N-1 : (rank+1)*N/size;
 
-  // --------- start some testing
+  // --------- for debugging to get to know which rank is processing which subpart
   printf("I am rank #%d and I serve [%d, %d] from [0, %d]\n", rank, min_index, max_index, N-1);
  
   Vector sub_array = createVector(max_index-min_index);
@@ -76,8 +79,6 @@ int main(int argc, char **argv) {
     int index_A = displs[rank];
     for(int i=0; i<max_index-min_index; i++){
       
-      //sub_array[i] = A[i+displs[rank]]+rank;
-
       if (index_A == source_x) {
         sub_array[i] = A[source_x];
         index_A++; 

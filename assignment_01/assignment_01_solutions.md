@@ -7,7 +7,7 @@ Handl Philip, Buchauer Manuel, De Sclavis Davide
 ### Tasks
 #### Study how to submit jobs in SGE, how to check their state and how to cancel them.
 
-- <code>qsub name_of_script</code> is used to submit jobs where name_of_script represents the path to  a simple shell script containing the commands to be run on the remote cluster nodes.
+- <code>qsub name_of_script</code> is used to submit jobs where name_of_script represents the path to a simple shell script containing the commands to be run on the remote cluster nodes.
 For instance if a script called `save_the_world.sh` should be executed the following command has to be ran: <code>qsub save_the_world.sh</code> 
 - <code>qstat</code> to get information about running or waiting jobs, e.g. when the job was started, its current state, its ID or its name.  
 - <code>qdel job-id</code> to delete a running job. This terminates the job and frees up acquired resources.
