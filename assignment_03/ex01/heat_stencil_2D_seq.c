@@ -76,7 +76,7 @@ int main(int argc, char **argv){
         value_t td = (i != N - 1) ? A[i + 1][j] : tc;
 
         // compute new temperature at current position
-        B[i][j] = tc + 0.2 * (tl + tr + tu + td + (-4 * tc));
+        B[i][j] = 0.25 * (tl + tr + tu + td);
       }
     }
 
