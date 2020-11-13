@@ -96,7 +96,7 @@ int main(int argc, char **argv){
   releaseMatrix(B);
 
   // ---------- check ----------
-  printf("Final:\t\t");
+  printf("Final:\t\t\n");
   printTemperature(A, N);
   printf("\n");
 
