@@ -70,13 +70,13 @@ int main(int argc, char **argv){
         value_t tc = A[i][j];
 
         // get temperatures of adjacent cells
-        value_t tl = (j != 0) ? A[i][j - 1] : tc;
-        value_t tr = (j != N - 1) ? A[i][j + 1] : tc;
-        value_t tu = (i != 0) ? A[i - 1][j] : tc;
-        value_t td = (i != N - 1) ? A[i + 1][j] : tc;
+        value_t tu = (j != 0) ? A[i][j - 1] : tc;
+        value_t ta = (j != N - 1) ? A[i][j + 1] : tc;
+        value_t tl = (i != 0) ? A[i - 1][j] : tc;
+        value_t tr = (i != N - 1) ? A[i + 1][j] : tc;
 
         // compute new temperature at current position
-        B[i][j] = 0.25 * (tl + tr + tu + td);
+        B[i][j] = 0.25 * (tl + tr + tu + ta);
       }
     }
 
@@ -156,9 +156,10 @@ void printTemperature(Matrix m, int N) {
     for (int j = 0; j < W; j++) {
       // get max temperature in this tile
       value_t max_t = 0;
-      for (int y = yW * i; y < yW * i + yW; y++) {
-        for (int x = xW * j; x < xW * j + xW; x++) {
-          max_t = (max_t < m[y][x]) ? m[y][x] : max_t;
+      
+      for (int x = xW * j; x < xW * j + xW; x++) {
+        for (int y = yW * i; y < yW * i + yW; y++) {
+          max_t = (max_t < m[x][y]) ? m[x][y] : max_t;
         }
       }
       value_t temp = max_t;
