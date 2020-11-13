@@ -18,7 +18,7 @@ heat_stencil_2D_mpi: heat_stencil_2D_mpi.c
 	@$(CC) $(CC_FLAGS) $< -o heat_stencil_2D_mpi
 
 heat_stencil_3D_seq: heat_stencil_3D_seq.c
-	@$(GCC) $(CC_FLAGS) $< -o heat_stencil_1D_seq
+	@$(GCC) $(CC_FLAGS) $< -o heat_stencil_3D_seq
 
 heat_stencil_3D_mpi: heat_stencil_3D_mpi.c
 	@$(CC) $(CC_FLAGS) $< -o heat_stencil_3D_mpi
