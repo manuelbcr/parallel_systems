@@ -17,118 +17,142 @@ void releaseVector(Vector m);
 void printTemperature(Vector m, int N);
 
 // -- simulation code ---
-// -- MPI version for heat stencil ---
+
 int main(int argc, char **argv) {
-   
+  // 'parsing' optional input parameter = problem size
   int N = 2000;
   if (argc > 1) {
     N = atoi(argv[1]);
   }
+  int T = N * 100;
+  printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
-  // set number of time steps 
-  int T = N * 500;
+  // ---------- setup ----------
 
-  // create vector of N elements as a field 
+  // create a buffer for storing temperature fields
   Vector A = createVector(N);
 
-  // initialize A with 273K
+  // set up initial conditions in A
   for (int i = 0; i < N; i++) {
-    A[i] = 273; 
+    A[i] = 273; // temperature is 0° C everywhere (273 K)
   }
 
   // and there is a heat source in one corner
   int source_x = N / 4;
   A[source_x] = 273 + 60;
 
-
   // setup of parallel part
-  int rank, size;
+  int rank, rank_size;
   int root_proc = 0;
   MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_size(MPI_COMM_WORLD, &rank_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  // initialize displacements of sub arrays for gathering subresults
-  int* displs = (int *) malloc(sizeof(int)*size);
-  // initialize array containing number of elements of each subresult array
-  int* receive_counts = (int *) malloc(sizeof(int)*size);
+  // calculate window size and initialize subarray
+  int window_size = N/rank_size;
+  Vector A_sub = createVector(window_size);
 
-  // set displacement and receive-counts for each rank
-  for(int i=0; i<size; i++){
-    int min = (i*N)/size;
-    int max = (i == size-1) ? N : (i+1)*N/size;
-    //displs[i] = (i == 0) ? 0 : min+1;
-    displs[i] = min;
-    receive_counts[i] = max-min+1;
+  // copy values into sub array for each rank
+  for(int i=0; i < window_size; i++){
+    A_sub[i] = A[i+rank*window_size];
   }
 
-  // get min and max index of A for which current rank is responsible
-  int min_index = (rank == root_proc) ? 0 : (rank*N)/size;
-  int max_index = (rank == size-1) ? N : (rank+1)*N/size;
+  printf("(RANK#%d): I am responsible for subpart: [%d, %d]\n", rank, rank*window_size, rank*window_size+window_size-1);
 
-  // --------- for debugging to get to know which rank is processing which subpart
-  printf("I am rank #%d and I serve [%d, %d] from [0, %d]\n", rank, min_index, max_index, N-1);
- 
+  // intial print of heat environment
   if(rank == root_proc){
     printf("Initial:\t");
     printTemperature(A, N);
     printf("\n");
   }
 
-  // sub_array contains the subresult of each rank (similar to B) 
-  Vector sub_array = createVector(max_index-min_index);
-  for(int timestep=0; timestep<T; timestep++){
-    // Broadcast A such that all have same data again
-    MPI_Bcast(A, N, MPI_DOUBLE, root_proc, MPI_COMM_WORLD);
+  // ---------- compute ----------
+  // create a second buffer for the computation
+  Vector B_sub = createVector(window_size);
+  int min_index_in_A = rank*window_size;
 
-    // index_A contains corresponding index to i in A
-    // sub_array has range [0, max_index-min-index] <-> A has range [displs[rank], displs[rank]+max_index-min_index]
-    int index_A = displs[rank];
-    for(int i=0; i<max_index-min_index; i++){
+  // for each time step ..
+  for (int t = 0; t < T; t++) {
 
-      // heat source has always same heat
-      if (index_A == source_x) {
-        sub_array[i] = A[source_x];
-        index_A++; 
+    // left and right border cell that came from other ranks 
+    value_t edge_cell_l = A_sub[0];
+    value_t edge_cell_r = A_sub[window_size-1];
+    
+    // first all even ranks are sending than all odd ones
+    if(rank%2 == 0){
+      if(rank > 0){
+        MPI_Send(&A_sub[0], 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD);
+        MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      }
+      if(rank < rank_size-1){
+        MPI_Send(&A_sub[window_size-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+        MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      }
+    }
+    else{
+      if(rank < rank_size-1){
+        MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Send(&A_sub[window_size-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+      }
+      if(rank > 0){
+        MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Send(&A_sub[0], 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD);
+      }
+    }
+
+    // .. we propagate the temperature
+    for (long long i = 0; i < window_size; i++) {
+      // center stays constant (the heat is still on)
+      if (i+min_index_in_A == source_x) {
+        B_sub[i] = A_sub[i];
         continue;
       }
 
-      value_t tc = A[index_A];
+      // get temperature at current position
+      value_t tc = A_sub[i];
 
       // get temperatures of adjacent cells
-      value_t tl = (index_A != 0) ? A[index_A - 1] : tc;
-      value_t tr = (index_A != N - 1) ? A[index_A + 1] : tc;
-      
+      value_t tl = (i != 0) ? A_sub[i - 1] : edge_cell_l;
+      value_t tr = (i != window_size - 1) ? A_sub[i + 1] : edge_cell_r;
+
       // compute new temperature at current position
-      sub_array[i] = tc + 0.2 * (tl + tr + (-2 * tc));
-
-      index_A++;
+      B_sub[i] = tc + 0.2 * (tl + tr + (-2 * tc));
     }
-  
 
-    // end some testing ---------------
-    // gather subresults again and write them to A
-    MPI_Gatherv(sub_array, max_index-min_index, MPI_DOUBLE, 
+    // swap matrices (just pointers, not content)
+    Vector H_sub = A_sub;
+    A_sub = B_sub;
+    B_sub = H_sub;
+  }
+
+  // initialize displacements of sub arrays for gathering subresults
+  int* displs = (int *) malloc(sizeof(int)*rank_size);
+  // initialize array containing number of elements of each subresult array
+  int* receive_counts = (int *) malloc(sizeof(int)*rank_size);
+  
+  // set displacement and receive-counts for each rank
+  for(int i=0; i<rank_size; i++){
+    int min = (i*N)/rank_size;
+    int max = (i == rank_size-1) ? N : (i+1)*N/rank_size;
+    displs[i] = min;
+    receive_counts[i] = max-min+1;
+  }
+  
+  // gather all end-sub-results for final output
+  MPI_Gatherv(A_sub, window_size, MPI_DOUBLE, 
                A, receive_counts, displs, MPI_DOUBLE, 
                0, MPI_COMM_WORLD);
 
-    if(rank == root_proc){
-      if (!(timestep % 1000)) {
-        printf("Step t=%d:\t", timestep);
-        printTemperature(A, N);
-        printf("\n");
-      }
-    }
+  releaseVector(B_sub);
+  releaseVector(A_sub);
 
-  }
-
-  // final print
-  if(rank == root_proc){  
+  // ---------- check ----------
+  int success = 1;
+  if(rank == root_proc){
     printf("Final:\t\t");
     printTemperature(A, N);
     printf("\n");
-
-    int success = 1;
+   
     for (long long i = 0; i < N; i++) {
       value_t temp = A[i];
       if (273 <= temp && temp <= 273 + 60)
@@ -138,31 +162,21 @@ int main(int argc, char **argv) {
     }
 
     printf("Verification: %s\n", (success) ? "OK" : "FAILED");
-
-    printf("[");
-    for(int i=0; i<N; i++){
-      printf("%f, ", A[i]);
-    }
-    printf("]\n");
-
-
   }
-
-  // finalize by freeing vectors
-  releaseVector(sub_array);
+  // ---------- cleanup ----------
   MPI_Finalize();
   releaseVector(A);
 
-  return 0;
+  // done
+  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 Vector createVector(int N) {
   // create data and index vector
-     return malloc(sizeof(value_t) * N);
+  return malloc(sizeof(value_t) * N);
 }
 
 void releaseVector(Vector m) { free(m); }
-
 
 void printTemperature(Vector m, int N) {
   const char *colors = " .-:=+*^X#%@";
@@ -171,25 +185,23 @@ void printTemperature(Vector m, int N) {
   // boundaries for temperature (for simplicity hard-coded)
   const value_t max = 273 + 30;
   const value_t min = 273 + 0;
+
   // set the 'render' resolution
   int W = RESOLUTION;
 
   // step size in each dimension
   int sW = N / W;
- 
+
   // room
   // left wall
   printf("X");
-
   // actual room
   for (int i = 0; i < W; i++) {
     // get max temperature in this tile
     value_t max_t = 0;
-
     for (int x = sW * i; x < sW * i + sW; x++) {
       max_t = (max_t < m[x]) ? m[x] : max_t;
     }
-
     value_t temp = max_t;
 
     // pick the 'color'
@@ -199,9 +211,6 @@ void printTemperature(Vector m, int N) {
     // print the average temperature
     printf("%c", colors[c]);
   }
-
   // right wall
   printf("X");
 }
-
-

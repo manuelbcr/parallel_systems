@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     N = atoi(argv[1]);
   }
-  int T = N * 500;
+  int T = N * 100;
   printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
   // ---------- setup ----------
