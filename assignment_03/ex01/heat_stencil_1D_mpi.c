@@ -49,15 +49,24 @@ int main(int argc, char **argv) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   // calculate window size and initialize subarray
-  int window_size = N/rank_size;
-  Vector A_sub = createVector(window_size);
+  // we have to deal the case when N is not divideable by the rank_size
+  // window_size is the window_size of all ranks (except of last one maybe)
+  // last_index is used for loop boundaries for(i<last_index) 
+  // that is dependent on the rank and potentially different for last one
+  int mod_N = N%rank_size;
+  int window_size = (mod_N != 0) ? (N-mod_N)/rank_size : N/rank_size;
+  int last_index = window_size;
+  if((rank == rank_size-1) && (mod_N != 0)){
+    last_index += mod_N;
+  }
+  Vector A_sub = createVector(last_index);
 
   // copy values into sub array for each rank
-  for(int i=0; i < window_size; i++){
+  for(int i=0; i < last_index; i++){
     A_sub[i] = A[i+rank*window_size];
   }
 
-  printf("(RANK#%d): I am responsible for subpart: [%d, %d]\n", rank, rank*window_size, rank*window_size+window_size-1);
+  printf("(RANK#%d): I am responsible for subpart: [%d, %d]\n", rank, rank*window_size, rank*window_size+last_index-1);
 
   // intial print of heat environment
   if(rank == root_proc){
@@ -68,7 +77,7 @@ int main(int argc, char **argv) {
 
   // ---------- compute ----------
   // create a second buffer for the computation
-  Vector B_sub = createVector(window_size);
+  Vector B_sub = createVector(last_index);
   int min_index_in_A = rank*window_size;
 
   // for each time step ..
@@ -76,7 +85,7 @@ int main(int argc, char **argv) {
 
     // left and right border cell that came from other ranks 
     value_t edge_cell_l = A_sub[0];
-    value_t edge_cell_r = A_sub[window_size-1];
+    value_t edge_cell_r = A_sub[last_index-1];
     
     // first all even ranks are sending than all odd ones
     if(rank%2 == 0){
@@ -85,14 +94,14 @@ int main(int argc, char **argv) {
         MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       }
       if(rank < rank_size-1){
-        MPI_Send(&A_sub[window_size-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+        MPI_Send(&A_sub[last_index-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
         MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       }
     }
     else{
       if(rank < rank_size-1){
         MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Send(&A_sub[window_size-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+        MPI_Send(&A_sub[last_index-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
       }
       if(rank > 0){
         MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -101,7 +110,7 @@ int main(int argc, char **argv) {
     }
 
     // .. we propagate the temperature
-    for (long long i = 0; i < window_size; i++) {
+    for (long long i = 0; i < last_index; i++) {
       // center stays constant (the heat is still on)
       if (i+min_index_in_A == source_x) {
         B_sub[i] = A_sub[i];
@@ -113,7 +122,7 @@ int main(int argc, char **argv) {
 
       // get temperatures of adjacent cells
       value_t tl = (i != 0) ? A_sub[i - 1] : edge_cell_l;
-      value_t tr = (i != window_size - 1) ? A_sub[i + 1] : edge_cell_r;
+      value_t tr = (i != last_index - 1) ? A_sub[i + 1] : edge_cell_r;
 
       // compute new temperature at current position
       B_sub[i] = tc + 0.2 * (tl + tr + (-2 * tc));
@@ -132,10 +141,8 @@ int main(int argc, char **argv) {
   
   // set displacement and receive-counts for each rank
   for(int i=0; i<rank_size; i++){
-    int min = (i*N)/rank_size;
-    int max = (i == rank_size-1) ? N : (i+1)*N/rank_size;
-    displs[i] = min;
-    receive_counts[i] = max-min+1;
+    displs[i] = i*window_size;
+    receive_counts[i] = last_index;
   }
   
   // gather all end-sub-results for final output
