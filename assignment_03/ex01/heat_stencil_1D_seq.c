@@ -91,14 +91,22 @@ int main(int argc, char **argv) {
   printTemperature(A, N);
   printf("\n");
 
+  FILE *fp;
+
+  fp = fopen("1D-output-seq.dat", "w");
+  fprintf(fp, "%d\n", N);
+
+
   int success = 1;
   for (long long i = 0; i < N; i++) {
     value_t temp = A[i];
+    fprintf(fp, "%f\n", temp);
     if (273 <= temp && temp <= 273 + 60)
       continue;
     success = 0;
     break;
   }
+  fclose(fp);
 
   printf("Verification: %s\n", (success) ? "OK" : "FAILED");
 
