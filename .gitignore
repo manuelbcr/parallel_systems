@@ -16,5 +16,12 @@
 /assignment_03/ex01/heat_stencil_2D_mpi
 /assignment_03/ex01/heat_stencil_3D_seq
 /assignment_03/ex01/heat_stencil_3D_mpi
+/assignment_03/ex01/heat_stencil_checker
+/assignment_03/ex01/1D-output-seq.dat
+/assignment_03/ex01/1D-output-mpi.dat
+/assignment_03/ex01/2D-output-seq.dat
+/assignment_03/ex01/2D-output-mpi.dat
+/assignment_03/ex01/3D-output-seq.dat
+/assignment_03/ex01/3D-output-mpi.dat
 
 output.dat
