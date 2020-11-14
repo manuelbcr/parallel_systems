@@ -100,16 +100,25 @@ int main(int argc, char **argv){
   printTemperature(A, N);
   printf("\n");
 
+  FILE *fp;
+
+  fp = fopen("2D-output-seq.dat", "w");
+  fprintf(fp, "%d\n", N);
+
+
   int success = 1;
   for (long long i = 0; i < N; i++) {
     for (long long j = 0; j < N; j++) {
       value_t temp = A[i][j];
+      fprintf(fp, "%f\n", temp);
       if (273 <= temp && temp <= 273 + 60)
         continue;
       success = 0;
       break;
     }
   }
+
+  fclose(fp);
 
   printf("Verification: %s\n", (success) ? "OK" : "FAILED");
 
@@ -156,7 +165,6 @@ void printTemperature(Matrix m, int N) {
     for (int j = 0; j < W; j++) {
       // get max temperature in this tile
       value_t max_t = 0;
-      
       for (int x = xW * j; x < xW * j + xW; x++) {
         for (int y = yW * i; y < yW * i + yW; y++) {
           max_t = (max_t < m[x][y]) ? m[x][y] : max_t;
