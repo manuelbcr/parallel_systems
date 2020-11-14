@@ -13,7 +13,7 @@ typedef value_t **Matrix;
 
 Matrix createMatrix(int N);
 
-void releaseMatrix(Matrix m);
+void releaseMatrix(Matrix m, int N);
 
 void printTemperature(Matrix m, int N);
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv){
     }
   }
 
-  releaseMatrix(B);
+  releaseMatrix(B, N);
 
   // ---------- check ----------
   printf("Final:\t\t\n");
@@ -124,7 +124,7 @@ int main(int argc, char **argv){
 
   // ---------- cleanup ----------
 
-  releaseMatrix(A);
+  releaseMatrix(A, N);
 
   // done
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -139,7 +139,12 @@ Matrix createMatrix(int N) {
   return mat;
 }
 
-void releaseMatrix(Matrix m) { free(m); }
+void releaseMatrix(Matrix m, int N) { 
+  for(int i=0; i < N; i++){
+    free(m[i]); 
+  }
+  free(m); 
+}
 
 void printTemperature(Matrix m, int N) {
   const char *colors = " .-:=+*^X#%@";
