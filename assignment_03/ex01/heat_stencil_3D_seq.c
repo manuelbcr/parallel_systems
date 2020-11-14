@@ -44,7 +44,7 @@ int main(int argc, char **argv){
   }
 
   printTemperature(A, N);
-  /*
+  
   // and there is a heat source in one corner
   int source_x = N / 4;
   int source_y = N / 8;
@@ -65,23 +65,28 @@ int main(int argc, char **argv){
     // .. we propagate the temperature
     for (long long i = 0; i < N; i++) {
       for (long long j = 0; j < N; j++) {
-        // center stays constant (the heat is still on)
-        if (i == source_y && j == source_x) {
-          B[i][j] = A[i][j];
-          continue;
+        for (long long k = 0; k < N; k++) {
+          // center stays constant (the heat is still on)
+          if (i == source_y && j == source_x && k == source_z) {
+            B[i][j][k] = A[i][j][k];
+            continue;
+          }
+
+          // get temperature at current position
+          value_t tc = A[i][j][k];
+
+          //value_t = ((i > 0) && (j > 0)) ? A[i-1][j-1][k] : tc;
+          //value_t = ((i > 0) && (j > 0) && (k > 0)) ? A[i-1][j-1][k-1] : tc;
+          value_t t_up = (i > 0) ? A[i-1][j][k] : tc;
+          value_t t_left = (j > 0) ? A[i][j-1][k] : tc;
+          value_t t_front = (k > 0) ? A[i][j][k-1] : tc;
+          value_t t_down = (i < N-1) ? A[i+1][j][k] : tc;
+          value_t t_right = (j < N-1) ? A[i][j+1][k] : tc;
+          value_t t_back = (k < N-1) ? A[i][j][k+1] : tc;
+
+          // compute new temperature at current position
+          B[i][j][k] = (1.0/6.0) * (t_up + t_down + t_left + t_right + t_front + t_back);
         }
-
-        // get temperature at current position
-        value_t tc = A[i][j];
-
-        // get temperatures of adjacent cells
-        value_t tu = (j != 0) ? A[i][j - 1] : tc;
-        value_t ta = (j != N - 1) ? A[i][j + 1] : tc;
-        value_t tl = (i != 0) ? A[i - 1][j] : tc;
-        value_t tr = (i != N - 1) ? A[i + 1][j] : tc;
-
-        // compute new temperature at current position
-        B[i][j] = 0.25 * (tl + tr + tu + ta);
       }
     }
 
@@ -98,7 +103,7 @@ int main(int argc, char **argv){
     }
   }
 
-  releaseMatrix(B);
+  releaseMatrix(B, N);
 
   // ---------- check ----------
   printf("Final:\t\t\n");
@@ -107,19 +112,21 @@ int main(int argc, char **argv){
 
   FILE *fp;
 
-  fp = fopen("2D-output-seq.dat", "w");
+  fp = fopen("3D-output-seq.dat", "w");
   fprintf(fp, "%d\n", N);
 
 
   int success = 1;
   for (long long i = 0; i < N; i++) {
     for (long long j = 0; j < N; j++) {
-      value_t temp = A[i][j];
-      fprintf(fp, "%f\n", temp);
-      if (273 <= temp && temp <= 273 + 60)
-        continue;
-      success = 0;
-      break;
+      for (long long k = 0; k < N; k++) {
+        value_t temp = A[i][j][k];
+        fprintf(fp, "%f\n", temp);
+        if (273 <= temp && temp <= 273 + 60)
+          continue;
+        success = 0;
+        break;
+      }
     }
   }
 
@@ -133,9 +140,9 @@ int main(int argc, char **argv){
 
   // done
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
-  */
-  releaseMatrix(A, N);
-  return 0;
+  // */
+  //releaseMatrix(A, N);
+  //return 0;
 }
 
 Matrix create3DMatrix(int N) {
