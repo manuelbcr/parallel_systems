@@ -47,9 +47,9 @@ int main(int argc, char **argv){
   
   // and there is a heat source in one corner
   int source_x = N / 4;
-  int source_y = N / 8;
-  int source_z = N / 2;
-  A[source_y][source_x][source_z] = 273 + 60;
+  int source_y = N / 4;
+  int source_z = N / 4;
+  A[source_z][source_y][source_x] = 273 + 60;
 
   printf("Initial:\t");
   printTemperature(A, N);
@@ -67,7 +67,7 @@ int main(int argc, char **argv){
       for (long long j = 0; j < N; j++) {
         for (long long k = 0; k < N; k++) {
           // center stays constant (the heat is still on)
-          if (i == source_y && j == source_x && k == source_z) {
+          if (i == source_z && j == source_y && k == source_z) {
             B[i][j][k] = A[i][j][k];
             continue;
           }
