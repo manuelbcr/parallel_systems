@@ -15,6 +15,8 @@ Matrix create3DMatrix(int N);
 
 void releaseMatrix(Matrix m, int N);
 
+void printTemperature(Matrix m, int N);
+
 // -- simulation code ---
 
 int main(int argc, char **argv){
@@ -31,19 +33,23 @@ int main(int argc, char **argv){
 
   // create a buffer for storing temperature fields
   Matrix A = create3DMatrix(N);
-  releaseMatrix(A, N);
-  return 0;
-  /*// set up initial conditions in A
+
+  // set up initial conditions in A
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      A[i][j] = 273; // temperature is 0° C everywhere (273 K)
+      for(int k = 0; k < N; k++){
+        A[i][j][k] = 273; // temperature is 0° C everywhere (273 K)
+      }
     }
   }
 
+  printTemperature(A, N);
+  /*
   // and there is a heat source in one corner
   int source_x = N / 4;
   int source_y = N / 8;
-  A[source_y][source_x] = 273 + 60;
+  int source_z = N / 2;
+  A[source_y][source_x][source_z] = 273 + 60;
 
   printf("Initial:\t");
   printTemperature(A, N);
@@ -123,11 +129,13 @@ int main(int argc, char **argv){
 
   // ---------- cleanup ----------
 
-  releaseMatrix(A);
+  releaseMatrix(A, N);
 
   // done
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
-*/
+  */
+  releaseMatrix(A, N);
+  return 0;
 }
 
 Matrix create3DMatrix(int N) {
@@ -152,3 +160,32 @@ void releaseMatrix(Matrix m, int N) {
   free(m);
 }
 
+void printTemperature(Matrix m, int N) {
+
+  printf("########################################----START 3D MATRIX\n");
+  for(int i = 0; i < N; i++){
+    if((i < 5) || (i >= N-5)){
+      printf("#%d:\n", i);
+      for(int j = 0; j < N; j++){
+        if((j < 5) || (j >= N-5)){
+          for(int k = 0; k < N; k++){
+            // only print first and last 5 values of one line
+   	    if(k < 5 || k >= N-5) {
+              printf("%1.3f ", m[i][j][k]);
+            }
+            else if(k == 5){
+              printf("... ");
+            }
+          }
+          printf("\n");
+        }
+        else if(j == 5){
+          printf("...\n");
+        }
+      }
+      printf("\n\n");
+    } 
+  }
+
+  printf("###########################################----END 3D MATRIX\n");
+}
