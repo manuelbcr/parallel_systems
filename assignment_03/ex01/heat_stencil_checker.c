@@ -32,7 +32,60 @@ int main(int argc, char **argv) {
   }
   printf("Check sequential file: %s and mpi: %s\n", file_seq, file_mpi);
 
+  // get data from sequential file
+  FILE *fp;
+
+  fp = fopen(file_seq, "r");
+
+  int N_seq = 0;
+  fscanf(fp, "%d", &N_seq);
+  printf("Dimensions of %s: %d\n", file_seq, N_seq);
+  
+  Vector seq_output = createVector(N_seq);
+  int current_val = 0;
+  for(int i=0; i<N_seq; i++){
+    fscanf(fp, "%d", &current_val);
+    seq_output[i] = current_val; 
+  }
+
+  fclose(fp);
+  
+  // get data from mpi file
+  fp = fopen(file_mpi, "r");
+
+  int N_mpi = 0;
+  fscanf(fp, "%d", &N_mpi);
+  printf("Dimensions of %s: %d\n", file_mpi, N_mpi);
+  
+  Vector mpi_output = createVector(N_mpi);
+  current_val = 0;
+  for(int i=0; i<N_mpi; i++){
+    fscanf(fp, "%d", &current_val);
+    mpi_output[i] = current_val; 
+  }
+
+  fclose(fp);
+  
+
+  // check files
+  if(N_seq != N_mpi){
+    printf("You are not checking the same dimensions: N_seq=%d <=> N_mpi=%d\n", N_seq, N_mpi);
+    return EXIT_SUCCESS;
+  }
+
+  value_t abs_error = 0;
+  for(int i=0; i < N_seq; i++){
+    abs_error += abs(seq_output[i] - mpi_output[i]);
+  }
+
+  printf("Error value: %f\n", abs_error);
+
   // done
+  releaseVector(seq_output);
+  releaseVector(mpi_output);
+
+  printf("Check was successful!\n");
+
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
