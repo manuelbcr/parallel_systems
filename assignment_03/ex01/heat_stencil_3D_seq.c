@@ -20,6 +20,7 @@ void printTemperature(Matrix m, int N);
 // -- simulation code ---
 
 int main(int argc, char **argv){
+  clock_t start = clock();
   // 'parsing' optional input parameter = problem size
   int N = 16; // rows x columns
 
@@ -103,6 +104,9 @@ int main(int argc, char **argv){
   }
 
   releaseMatrix(B, N);
+  clock_t end = clock();
+  printf("The process took %f seconds to finish. \n", ((double)(end - start)));
+
 
   // ---------- check ----------
   printf("Final:\t\t\n");

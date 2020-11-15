@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+  #include <time.h>
 
 typedef double value_t;
 
@@ -18,12 +19,14 @@ void printTemperature(Vector m, int N);
 // -- simulation code ---
 
 int main(int argc, char **argv) {
+
+  clock_t start = clock();
   // 'parsing' optional input parameter = problem size
-  int N = 2000;
+  int N = 400;
   if (argc > 1) {
     N = atoi(argv[1]);
   }
-  int T = N * 100;
+  int T = N * 500;
   printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
   // ---------- setup ----------
@@ -84,6 +87,9 @@ int main(int argc, char **argv) {
   }
 
   releaseVector(B);
+
+  clock_t end = clock();
+  printf("The process took %f seconds to finish. \n", ((double)(end - start)) / CLOCKS_PER_SEC);
 
   // ---------- check ----------
 
