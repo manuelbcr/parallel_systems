@@ -105,7 +105,7 @@ int main(int argc, char **argv){
 
   releaseMatrix(B, N);
   clock_t end = clock();
-  printf("The process took %f seconds to finish. \n", ((double)(end - start)));
+  printf("The process took %f seconds to finish. \n", ((double)(end - start))/ CLOCKS_PER_SEC);
 
 
   // ---------- check ----------
