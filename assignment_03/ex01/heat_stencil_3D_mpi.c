@@ -14,11 +14,11 @@ typedef value_t ***Matrix;
 
 Matrix create3DMatrix(int N_x, int N_y, int N_z);
 
-void releaseMatrix(Matrix m, int N_x, int N_y);
+void releaseMatrix(Matrix m);
 
 void printTemperature(Matrix m, int N);
 
-void linearizeAsub(value_t* plane, value_t*** A_sub_tmp, int N, int window_size);
+void linearizeAsub(value_t* plane, value_t*** A_sub_tmp, int N, int offset);
 
 // -- simulation code ---
 
@@ -46,18 +46,22 @@ int main(int argc, char **argv){
     }
   }
 
-
+  // start parallel execution
   MPI_Init(&argc, &argv);
   int rank, rank_size;
+  // get number of ranks
   MPI_Comm_size(MPI_COMM_WORLD, &rank_size);
 
+  // check if problem is dividable by 8
   if(N % rank_size != 0){
     printf("The problem of size N=%d is not divisable by the number of ranks=%d \n", N, rank_size);
     MPI_Finalize(); // cleanup
     return EXIT_FAILURE;
   }
 
+  // define root process
   int root_proc = 0;
+  // create virtual topology - 1D cartesian
   MPI_Comm stencil_comm;
   int dim[1] = {rank_size};
   int period[1] = {0};
@@ -94,6 +98,7 @@ int main(int argc, char **argv){
   Matrix B_sub = create3DMatrix(N, N, window_size);
   Matrix A_sub = create3DMatrix(N, N, window_size);
 
+  // copy data into sub array for processing
   for(int i=0; i<window_size; i++){
     for(int j=0; j<N; j++){
       for(int k=0; k<N; k++){
@@ -103,53 +108,32 @@ int main(int argc, char **argv){
   }
   
   // top and bottom border edges that came from other ranks 
-  value_t* edge_plane_bottom;// = &A_sub[0][0][0];
-  value_t* edge_plane_top;// = &A_sub[window_size-1][0][0];
+  value_t* edge_plane_bottom;// 
+  value_t* edge_plane_top;// 
   
   // if there has to be stored a new edge plane from another rank allocate memory
-  //if(bottom_rank >= 0){
-    edge_plane_bottom = malloc(sizeof(value_t)*N*N);
-  //}
-  //if(top_rank >= 0){
-    edge_plane_top = malloc(sizeof(value_t)*N*N);
-  //}
+  edge_plane_bottom = malloc(sizeof(value_t)*N*N);
+  edge_plane_top = malloc(sizeof(value_t)*N*N);
 
   // for each time step ..
   for (int t = 0; t < T; t++) {
     
     // first all even ranks are sending than all odd ones    
+    // linearizeAsub brings the top/bottom plane of A_sub into the same format as sended/received
     if(rank%2 == 0){
       if(bottom_rank >= 0){
         MPI_Send(&A_sub[0][0][0], 1, heat_stencil_edge_type, bottom_rank, 0, stencil_comm);
         MPI_Recv(edge_plane_bottom, N*N, MPI_DOUBLE, bottom_rank, 0, stencil_comm, MPI_STATUS_IGNORE);
-        if(rank==2 && t<=2){
-          printf("rank=%d get bottom from %d:\n", rank, bottom_rank);
-          for(int a=0; a<N; a++){
-            for(int b=0; b<N; b++){
-              printf("%f ", edge_plane_bottom[a*N+b]);
-            }
-            printf("\n");
-          }
-          printf("#########END DEBUG\n");
-        }
       }
       else{
-        for(int b=0; b<N; b++){
-          for(int c=0; c<N; c++){
-            edge_plane_bottom[b*N+c] = A_sub[0][b][c];
-          }
-        }
+        linearizeAsub(edge_plane_bottom, A_sub, N, 0);
       }
       if(top_rank >= 0){
         MPI_Send(&A_sub[window_size-1][0][0], 1, heat_stencil_edge_type, top_rank, 0, stencil_comm);
         MPI_Recv(edge_plane_top, N*N, MPI_DOUBLE, top_rank, 0, stencil_comm, MPI_STATUS_IGNORE);
       }
       else{
-        for(int b=0; b<N; b++){
-          for(int c=0; c<N; c++){
-            edge_plane_top[b*N+c] = A_sub[window_size-1][b][c];
-          }
-        }
+        linearizeAsub(edge_plane_top, A_sub, N, window_size-1);
       }
     }
     else{
@@ -158,22 +142,14 @@ int main(int argc, char **argv){
         MPI_Recv(edge_plane_bottom, N*N, MPI_DOUBLE, bottom_rank, 0, stencil_comm, MPI_STATUS_IGNORE);
       }
       else{
-        for(int b=0; b<N; b++){
-          for(int c=0; c<N; c++){
-            edge_plane_bottom[b*N+c] = A_sub[0][b][c];
-          }
-        }
+        linearizeAsub(edge_plane_bottom, A_sub, N, 0);
       }
       if(top_rank >= 0){
         MPI_Send(&A_sub[window_size-1][0][0], 1, heat_stencil_edge_type, top_rank, 0, stencil_comm);
         MPI_Recv(edge_plane_top, N*N, MPI_DOUBLE, top_rank, 0, stencil_comm, MPI_STATUS_IGNORE);
       }
       else{
-        for(int b=0; b<N; b++){
-          for(int c=0; c<N; c++){
-            edge_plane_top[b*N+c] = A_sub[window_size-1][b][c];
-          }
-        }
+        linearizeAsub(edge_plane_top, A_sub, N, window_size-1);
       }
     }
      
@@ -203,20 +179,6 @@ int main(int argc, char **argv){
       }
     }
 
-    if((abs(rank-1)<=1 || rank == 7 || rank == 0) && rank && t < 3){
-      printf("PRINT HEATSOURCE SURROUNDING - rank#%d at t=%d:\n", rank, t);
-      for(int i=0; i<window_size; i++){
-        printf("####%d:\n", i);
-        for(int j=0; j<N; j++){
-          for(int k=0; k<N; k++){
-            printf("%f ", B_sub[i][j][k]);
-          }
-          printf("\n");
-        } 
-      } 
-    }
-
-
     // swap matrices (just pointers, not content)
     Matrix H_sub = A_sub;
     A_sub = B_sub;
@@ -225,15 +187,10 @@ int main(int argc, char **argv){
   }
 
   // only free memory if it was allocated previously for this rank
-  /*if(bottom_rank >= 0){
-    free(edge_plane_bottom);
-  }
-  if(top_rank >= 0){
-    free(edge_plane_top);
-  }
-  value_t buf[N*N*N];
-  */
+  free(edge_plane_bottom);
+  free(edge_plane_top);
 
+  // has to linearize A_sub because we did not managed to get rid of ghost-cells
   value_t serialized_A_sub[window_size*N*N];
   for(int i=0; i<window_size;i++){
     for(int j=0; j<N; j++){
@@ -243,18 +200,18 @@ int main(int argc, char **argv){
     }
   }
   
+  // linearized A where data is written to
   value_t A_gather[N*N*N];
 
   MPI_Gather(serialized_A_sub, window_size*N*N, MPI_DOUBLE, A_gather, window_size*N*N, MPI_DOUBLE, root_proc, stencil_comm);
   int success = 1;
   // ---------- check ----------
   if(rank == root_proc){
-    printf("GATHERED A:\n");
+    // bring linearized A back to 3D format
     for(int i=0; i<N; i++){
       for(int j=0;j<N; j++){
         for(int k=0;k<N;k++){
           A[i][j][k] = A_gather[i*N*N+j*N+k];
-        
         }
       }
     }
@@ -288,16 +245,12 @@ int main(int argc, char **argv){
   }
   // ---------- cleanup ----------
   MPI_Type_free(&heat_stencil_edge_type);
-  releaseMatrix(A_sub, N, N);
+  releaseMatrix(A_sub);
   MPI_Finalize();
-  releaseMatrix(A, N, N);
+  releaseMatrix(A);
 
   // done
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
-  // */
-  //MPI_Finalize();
-  //releaseMatrix(A, N);
-  //return 0;
 }
 
 Matrix create3DMatrix(int N_x, int N_y, int N_z) {
@@ -312,13 +265,7 @@ Matrix create3DMatrix(int N_x, int N_y, int N_z) {
   return mat;
 }
 
-void releaseMatrix(Matrix m, int N_x, int N_y) { 
-  for(int i=0; i < N_y; i++){
-    for(int j=0; j < N_x; j++){
-      //free(m[i][j]);
-    }
-    //free(m[i]); 
-  }
+void releaseMatrix(Matrix m) { 
   free(m);
 }
 
@@ -353,12 +300,10 @@ void printTemperature(Matrix m, int N) {
 }
 
 
-void linearizeAsub(value_t* plane, value_t*** A_sub_tmp, int N, int window_size){
-  for(int i=0; i<window_size; i++){
-    for(int j=0; j<N; j++){
-      for(int k=0; k<N; k++){
-        plane[i*N*N+j*N+k] = A_sub_tmp[i][j][k];
-      }
+void linearizeAsub(value_t* plane, value_t*** A_sub_tmp, int N, int offset){
+  for(int j=0; j<N; j++){
+    for(int k=0; k<N; k++){
+      plane[j*N+k] = A_sub_tmp[offset][j][k];
     }
   }
 }
