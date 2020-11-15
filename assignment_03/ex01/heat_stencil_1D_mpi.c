@@ -19,12 +19,13 @@ void printTemperature(Vector m, int N);
 // -- simulation code ---
 
 int main(int argc, char **argv) {
+  double start = MPI_Wtime();
   // 'parsing' optional input parameter = problem size
-  int N = 2000;
+  int N = 100;
   if (argc > 1) {
     N = atoi(argv[1]);
   }
-  int T = N * 100;
+  int T = N * 500;
   printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
   // ---------- setup ----------
@@ -152,6 +153,13 @@ int main(int argc, char **argv) {
 
   releaseVector(B_sub);
   releaseVector(A_sub);
+
+  if (rank == 0)
+  {
+    double end = MPI_Wtime();
+    printf("The process took %g seconds to finish. \n", end - start);
+  }
+
 
   // ---------- check ----------
   int success = 1;

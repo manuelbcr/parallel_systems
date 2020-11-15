@@ -23,6 +23,7 @@ void linearizeAsub(value_t* plane, value_t*** A_sub_tmp, int N, int offset);
 // -- simulation code ---
 
 int main(int argc, char **argv){
+  double start = MPI_Wtime();
   // 'parsing' optional input parameter = problem size
   int N = 200; // rows x columns
 
@@ -205,6 +206,12 @@ int main(int argc, char **argv){
 
   MPI_Gather(serialized_A_sub, window_size*N*N, MPI_DOUBLE, A_gather, window_size*N*N, MPI_DOUBLE, root_proc, stencil_comm);
   int success = 1;
+
+  if (rank == 0)
+  {
+    double end = MPI_Wtime();
+    printf("The process took %g seconds to finish. \n", end - start);
+  }
   // ---------- check ----------
   if(rank == root_proc){
     // bring linearized A back to 3D format

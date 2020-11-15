@@ -20,13 +20,16 @@ void printTemperature(Matrix m, int N);
 // -- simulation code ---
 
 int main(int argc, char **argv){
+
+  clock_t start = clock();
+
   // 'parsing' optional input parameter = problem size
-  int N = 200; // rows x columns
+  int N = 100; // rows x columns
 
   if (argc > 1) {
     N = atoi(argv[1]);
   }
-  int T = N * 500;
+  int T = N*500;
   printf("Computing heat-distribution for room size N=%dx%d, for T=%d timesteps\n", N, N, T);
 
   // ---------- setup ----------
@@ -42,8 +45,8 @@ int main(int argc, char **argv){
   }
 
   // and there is a heat source in one corner
-  int source_x = N / 4;
-  int source_y = N / 8;
+  int source_x = 25;
+  int source_y = 25;
   A[source_y][source_x] = 273 + 60;
 
   printf("Initial:\t");
@@ -86,14 +89,17 @@ int main(int argc, char **argv){
     B = H;
 
     // show intermediate step
-    if (!(t % 1000)) {
-      printf("Step t=%d:\n", t);
-      printTemperature(A, N);
-      printf("\n");
-    }
+//    if (!(t % 1000)) {
+//      printf("Step t=%d:\n", t);
+//      printTemperature(A, N);
+//      printf("\n");
+//    }
   }
 
   releaseMatrix(B, N);
+
+  clock_t end = clock();
+  printf("The process took %f seconds to finish. \n", ((double)(end - start)) / CLOCKS_PER_SEC);
 
   // ---------- check ----------
   printf("Final:\t\t\n");
