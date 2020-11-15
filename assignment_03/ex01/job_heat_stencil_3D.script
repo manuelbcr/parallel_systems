@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#$ -q std.q
+#$ -cwd
+#$ -N my_test_job
+#$ -o output.dat
+#$ -j yes
+
+#$ -pe openmpi-8perhost 8
+
+module load openmpi/3.1.1
+
+mpiexec -n 8 ./heat_stencil_3D_mpi 16 
+
+
+

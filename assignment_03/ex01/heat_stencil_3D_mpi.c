@@ -1,207 +1,268 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <mpi.h>
+
 
 typedef double value_t;
 
-#define RESOLUTION 120
+#define RESOLUTION 100
 
-// -- vector utilities --
+// -- Matrix utilities --
 
-typedef value_t *Vector;
+typedef value_t ***Matrix;
 
-Vector createVector(int N);
+Matrix create3DMatrix(int N);
 
-void releaseVector(Vector m);
+void releaseMatrix(Matrix m, int N);
 
-void printTemperature(Vector m, int N);
+void printTemperature(Matrix m, int N);
 
 // -- simulation code ---
-// -- MPI version for heat stencil ---
-int main(int argc, char **argv) {
-   
-  int N = 2000;
+
+int main(int argc, char **argv){
+  // 'parsing' optional input parameter = problem size
+  int N = 200; // rows x columns
+
   if (argc > 1) {
     N = atoi(argv[1]);
   }
+  int T = N * 100;
+  printf("Computing heat-distribution for room size N=%dx%dx%d, for T=%d timesteps\n", N, N, N, T);
 
-  // set number of time steps 
-  int T = N * 500;
+  // ---------- setup ----------
 
-  // create vector of N elements as a field 
-  Vector A = createVector(N);
+  // create a buffer for storing temperature fields
+  Matrix A = create3DMatrix(N);
 
-  // initialize A with 273K
+  // set up initial conditions in A
   for (int i = 0; i < N; i++) {
-    A[i] = 273; 
+    for (int j = 0; j < N; j++) {
+      for(int k = 0; k < N; k++){
+        //A[i][j][k] = 273; // temperature is 0° C everywhere (273 K)
+        //A[i][j][k] = 1000*i+j+k/1000.0; // temperature is 0° C everywhere (273 K)
+        A[i][j][k] = i*N*N+j*N+k; // temperature is 0° C everywhere (273 K)
+      }
+    }
   }
 
+
+  MPI_Init(&argc, &argv);
+  int rank, rank_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &rank_size);
+
+  if(N % rank_size != 0){
+    printf("The problem of size N=%d is not divisable by the number of ranks=%d \n", N, rank_size);
+    MPI_Finalize(); // cleanup
+    return EXIT_FAILURE;
+  }
+
+  int root_proc = 0;
+  MPI_Comm stencil_comm;
+  int dim[1] = {rank_size};
+  int period[1] = {0};
+  int reorder = 1;
+  MPI_Cart_create(MPI_COMM_WORLD, 1, dim, period, reorder, &stencil_comm);
+  MPI_Comm_rank(stencil_comm, &rank);
+
+  if(rank == root_proc){
+    printTemperature(A, N);
+  }
+  /* 
+  MPI_Datatype heat_stencil_edge_top_type;
+
+  int dimensions_full_array[3] = {N, N, N};
+  int dimensions_subarray[3] = { 1, 5, 5 };
+  int start_coordinates_top[3] = { 0, 0, 0 };
+  MPI_Type_create_subarray(2,  dimensions_full_array, dimensions_subarray, start_coordinates_top, MPI_ORDER_C, MPI_DOUBLE, &heat_stencil_edge_top_type);
+
+  MPI_Type_commit(&heat_stencil_edge_top_type);
+  */
+
+  MPI_Datatype heat_stencil_edge_type;
+  
+  MPI_Type_vector(N, N, N+2, MPI_DOUBLE, &heat_stencil_edge_type);
+  MPI_Type_commit(&heat_stencil_edge_type);
+
+  if(rank == 0){
+    MPI_Send(&A[0][0][0], 1, heat_stencil_edge_type, 1, 0, stencil_comm);
+    MPI_Send(&A[1][0][0], 1, heat_stencil_edge_type, 1, 0, stencil_comm);
+  }
+
+  if(rank == 1){
+    value_t test_rec[N*N];
+    printf("test_rec dim: %d\n", N*N);
+    //MPI_Recv(&test_rec, 1, heat_stencil_edge_top_type, 0, 0, stencil_comm, MPI_STATUS_IGNORE); 
+    MPI_Recv(&test_rec, N*N, MPI_DOUBLE, 0, 0, stencil_comm, MPI_STATUS_IGNORE); 
+    printf("values top are: \n");
+    for(int i=0;i<N;i++){
+      for(int j=0;j<N;j++){
+        printf("%f ", test_rec[i*N+j]);
+      }
+      printf("\n");
+    }
+    printf("\n\n");
+
+    MPI_Recv(&test_rec, N*N, MPI_DOUBLE, 0, 0, stencil_comm, MPI_STATUS_IGNORE); 
+    printf("values top are: \n");
+    for(int i=0;i<N;i++){
+      for(int j=0;j<N;j++){
+        printf("%f ", test_rec[i*N+j]);
+      }
+      printf("\n");
+    }
+    printf("\n\n");
+
+
+  }
+
+  MPI_Finalize();
+  releaseMatrix(A, N);
+  return EXIT_SUCCESS;
   // and there is a heat source in one corner
   int source_x = N / 4;
-  A[source_x] = 273 + 60;
+  int source_y = N / 4;
+  int source_z = N / 4;
+  A[source_z][source_y][source_x] = 273 + 60;
 
-
-  // setup of parallel part
-  int rank, size;
-  int root_proc = 0;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-  // initialize displacements of sub arrays for gathering subresults
-  int* displs = (int *) malloc(sizeof(int)*size);
-  // initialize array containing number of elements of each subresult array
-  int* receive_counts = (int *) malloc(sizeof(int)*size);
-
-  // set displacement and receive-counts for each rank
-  for(int i=0; i<size; i++){
-    int min = (i*N)/size;
-    int max = (i == size-1) ? N : (i+1)*N/size;
-    //displs[i] = (i == 0) ? 0 : min+1;
-    displs[i] = min;
-    receive_counts[i] = max-min+1;
-  }
-
-  // get min and max index of A for which current rank is responsible
-  int min_index = (rank == root_proc) ? 0 : (rank*N)/size;
-  int max_index = (rank == size-1) ? N : (rank+1)*N/size;
-
-  // --------- for debugging to get to know which rank is processing which subpart
-  printf("I am rank #%d and I serve [%d, %d] from [0, %d]\n", rank, min_index, max_index, N-1);
- 
   if(rank == root_proc){
     printf("Initial:\t");
     printTemperature(A, N);
     printf("\n");
   }
+  // ---------- compute ----------
 
-  // sub_array contains the subresult of each rank (similar to B) 
-  Vector sub_array = createVector(max_index-min_index);
-  for(int timestep=0; timestep<T; timestep++){
-    // Broadcast A such that all have same data again
-    MPI_Bcast(A, N, MPI_DOUBLE, root_proc, MPI_COMM_WORLD);
+  // create a second buffer for the computation
+  Matrix B = create3DMatrix(N);
 
-    // index_A contains corresponding index to i in A
-    // sub_array has range [0, max_index-min-index] <-> A has range [displs[rank], displs[rank]+max_index-min_index]
-    int index_A = displs[rank];
-    for(int i=0; i<max_index-min_index; i++){
+  // for each time step ..
+  for (int t = 0; t < T; t++) {
+    // .. we propagate the temperature
+    for (long long i = 0; i < N; i++) {
+      for (long long j = 0; j < N; j++) {
+        for (long long k = 0; k < N; k++) {
+          // center stays constant (the heat is still on)
+          if (i == source_z && j == source_y && k == source_z) {
+            B[i][j][k] = A[i][j][k];
+            continue;
+          }
 
-      // heat source has always same heat
-      if (index_A == source_x) {
-        sub_array[i] = A[source_x];
-        index_A++; 
-        continue;
-      }
+          // get temperature at current position
+          value_t tc = A[i][j][k];
 
-      value_t tc = A[index_A];
+          //value_t = ((i > 0) && (j > 0)) ? A[i-1][j-1][k] : tc;
+          //value_t = ((i > 0) && (j > 0) && (k > 0)) ? A[i-1][j-1][k-1] : tc;
+          value_t t_up = (i > 0) ? A[i-1][j][k] : tc;
+          value_t t_left = (j > 0) ? A[i][j-1][k] : tc;
+          value_t t_front = (k > 0) ? A[i][j][k-1] : tc;
+          value_t t_down = (i < N-1) ? A[i+1][j][k] : tc;
+          value_t t_right = (j < N-1) ? A[i][j+1][k] : tc;
+          value_t t_back = (k < N-1) ? A[i][j][k+1] : tc;
 
-      // get temperatures of adjacent cells
-      value_t tl = (index_A != 0) ? A[index_A - 1] : tc;
-      value_t tr = (index_A != N - 1) ? A[index_A + 1] : tc;
-      
-      // compute new temperature at current position
-      sub_array[i] = tc + 0.2 * (tl + tr + (-2 * tc));
-
-      index_A++;
-    }
-  
-
-    // end some testing ---------------
-    // gather subresults again and write them to A
-    MPI_Gatherv(sub_array, max_index-min_index, MPI_DOUBLE, 
-               A, receive_counts, displs, MPI_DOUBLE, 
-               0, MPI_COMM_WORLD);
-
-    if(rank == root_proc){
-      if (!(timestep % 1000)) {
-        printf("Step t=%d:\t", timestep);
-        printTemperature(A, N);
-        printf("\n");
+          // compute new temperature at current position
+          B[i][j][k] = (1.0/6.0) * (t_up + t_down + t_left + t_right + t_front + t_back);
+        }
       }
     }
+
+    // swap matrices (just pointers, not content)
+    Matrix H = A;
+    A = B;
+    B = H;
 
   }
 
-  // final print
-  if(rank == root_proc){  
-    printf("Final:\t\t");
+  releaseMatrix(B, N);
+
+  int success = 1;
+  // ---------- check ----------
+  if(rank == root_proc){
+    printf("Final:\t\t\n");
     printTemperature(A, N);
     printf("\n");
 
-    int success = 1;
+    FILE *fp;
+
+    fp = fopen("3D-output-seq.dat", "w");
+    fprintf(fp, "%d\n", N);
+
+
     for (long long i = 0; i < N; i++) {
-      value_t temp = A[i];
-      if (273 <= temp && temp <= 273 + 60)
-        continue;
-      success = 0;
-      break;
+      for (long long j = 0; j < N; j++) {
+        for (long long k = 0; k < N; k++) {
+          value_t temp = A[i][j][k];
+          fprintf(fp, "%f\n", temp);
+          if (273 <= temp && temp <= 273 + 60)
+            continue;
+          success = 0;
+          break;
+        }
+      }
     }
+
+    fclose(fp);
 
     printf("Verification: %s\n", (success) ? "OK" : "FAILED");
-
-    printf("[");
-    for(int i=0; i<N; i++){
-      printf("%f, ", A[i]);
-    }
-    printf("]\n");
-
-
   }
-
-  // finalize by freeing vectors
-  releaseVector(sub_array);
+  // ---------- cleanup ----------
   MPI_Finalize();
-  releaseVector(A);
+  releaseMatrix(A, N);
 
-  return 0;
+  // done
+  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
+  // */
+  //releaseMatrix(A, N);
+  //return 0;
 }
 
-Vector createVector(int N) {
-  // create data and index vector
-     return malloc(sizeof(value_t) * N);
-}
-
-void releaseVector(Vector m) { free(m); }
-
-
-void printTemperature(Vector m, int N) {
-  const char *colors = " .-:=+*^X#%@";
-  const int numColors = 12;
-
-  // boundaries for temperature (for simplicity hard-coded)
-  const value_t max = 273 + 30;
-  const value_t min = 273 + 0;
-  // set the 'render' resolution
-  int W = RESOLUTION;
-
-  // step size in each dimension
-  int sW = N / W;
- 
-  // room
-  // left wall
-  printf("X");
-
-  // actual room
-  for (int i = 0; i < W; i++) {
-    // get max temperature in this tile
-    value_t max_t = 0;
-
-    for (int x = sW * i; x < sW * i + sW; x++) {
-      max_t = (max_t < m[x]) ? m[x] : max_t;
+Matrix create3DMatrix(int N) {
+  // create data and index Matrix
+  value_t ***mat = (value_t***) malloc(sizeof(value_t**)*N);
+  for (int i = 0; i < N; i++) {
+    mat[i] = (value_t **) malloc(sizeof(value_t*)*N);
+    for (int j = 0; j < N; j++) {
+      mat[i][j] = (value_t *) malloc(sizeof(value_t)*N);
     }
+  }
+  return mat;
+}
 
-    value_t temp = max_t;
+void releaseMatrix(Matrix m, int N) { 
+  for(int i=0; i < N; i++){
+    for(int j=0; j < N; j++){
+      free(m[i][j]);
+    }
+    free(m[i]); 
+  }
+  free(m);
+}
 
-    // pick the 'color'
-    int c = ((temp - min) / (max - min)) * numColors;
-    c = (c >= numColors) ? numColors - 1 : ((c < 0) ? 0 : c);
+void printTemperature(Matrix m, int N) {
 
-    // print the average temperature
-    printf("%c", colors[c]);
+  printf("########################################----START 3D MATRIX\n");
+  for(int i = 0; i < N; i++){
+    if((i < 5) || (i >= N-5)){
+      printf("#%d:\n", i);
+      for(int j = 0; j < N; j++){
+        if((j < 5) || (j >= N-5)){
+          for(int k = 0; k < N; k++){
+            // only print first and last 5 values of one line
+   	    if(k < 5 || k >= N-5) {
+              printf("%1.3f ", m[i][j][k]);
+            }
+            else if(k == 5){
+              printf("... ");
+            }
+          }
+          printf("\n");
+        }
+        else if(j == 5){
+          printf("...\n");
+        }
+      }
+      printf("\n\n");
+    } 
   }
 
-  // right wall
-  printf("X");
+  printf("###########################################----END 3D MATRIX\n");
 }
-
-
