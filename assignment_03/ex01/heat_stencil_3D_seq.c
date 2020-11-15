@@ -21,7 +21,7 @@ void printTemperature(Matrix m, int N);
 
 int main(int argc, char **argv){
   // 'parsing' optional input parameter = problem size
-  int N = 200; // rows x columns
+  int N = 16; // rows x columns
 
   if (argc > 1) {
     N = atoi(argv[1]);
@@ -43,15 +43,13 @@ int main(int argc, char **argv){
     }
   }
 
-  printTemperature(A, N);
-  
   // and there is a heat source in one corner
-  int source_x = N / 4;
-  int source_y = N / 4;
-  int source_z = N / 4;
+  int source_x = N / 8;
+  int source_y = N / 8;
+  int source_z = N / 8;
   A[source_z][source_y][source_x] = 273 + 60;
 
-  printf("Initial:\t");
+  printf("Initial - heatsource is at [%d][%d][%d]:\t", source_z, source_y, source_x);
   printTemperature(A, N);
   printf("\n");
 
@@ -67,7 +65,7 @@ int main(int argc, char **argv){
       for (long long j = 0; j < N; j++) {
         for (long long k = 0; k < N; k++) {
           // center stays constant (the heat is still on)
-          if (i == source_z && j == source_y && k == source_z) {
+          if (i == source_z && j == source_y && k == source_x) {
             B[i][j][k] = A[i][j][k];
             continue;
           }
@@ -96,7 +94,8 @@ int main(int argc, char **argv){
     B = H;
 
     // show intermediate step
-    if (!(t % 1000)) {
+    //if (!(t % 1000)) {
+    if (t < 2) {
       printf("Step t=%d:\n", t);
       printTemperature(A, N);
       printf("\n");
