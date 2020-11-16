@@ -61,7 +61,7 @@ All programs write the final output into a file _D-output-seq.dat or _D-output-m
 
 The first line is the dimension N and all further lines are the i-th entry of the final output.
 Since all corrsponding entries matched we assumend the program to be correct. 
-
+The old version with the bug is at heat_stencil_3d_mpi_bug.c
 ## Exercise 2
 
 This exercise consists in measuring all heat stencil variants (1D, 2D and 3D) to get a grasp of their performance behavior.
