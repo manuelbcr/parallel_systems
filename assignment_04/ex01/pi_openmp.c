@@ -36,24 +36,24 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    // current time as seed for random generator 
-    srand(time(NULL));
+
     #pragma omp parallel for reduction(+ : num_circle_pts)
-    for(unsigned long i = 0; i < nr_samples; i++){
+        for(unsigned long i = 0; i < nr_samples; i++){
+            unsigned int seed = (i+2)*omp_get_thread_num();
+            // random number between 0 and 1
+            random_x = (double) rand_r(&seed) / RAND_MAX;
+            random_y = (double) rand_r(&seed) / RAND_MAX;
 
-        // random number between 0 and 1
-        random_x = (double)rand() / RAND_MAX; 
-        random_y = (double)rand() / RAND_MAX;
 
-        // distance from origin -> pythagoras
-        dist = random_x * random_x + random_y * random_y;
+            // distance from origin -> pythagoras
+            dist = random_x * random_x + random_y * random_y;
 
-        if(dist <= 1){
+            if(dist <= 1){
 
-            num_circle_pts++;
-            
+                num_circle_pts++;
+                
+            }
         }
-    }
     
     pi = 4 * ((double)num_circle_pts / (double)nr_samples); 
     double end_time = omp_get_wtime();
