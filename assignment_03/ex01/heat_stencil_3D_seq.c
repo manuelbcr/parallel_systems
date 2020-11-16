@@ -45,9 +45,9 @@ int main(int argc, char **argv){
   }
 
   // and there is a heat source in one corner
-  int source_x = N / 8;
-  int source_y = N / 8;
-  int source_z = N / 8;
+  int source_x = 2;
+  int source_y = 2;
+  int source_z = 2;
   A[source_z][source_y][source_x] = 273 + 60;
 
   printf("Initial - heatsource is at [%d][%d][%d]:\t", source_z, source_y, source_x);
