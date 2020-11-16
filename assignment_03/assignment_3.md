@@ -36,6 +36,16 @@ The probelm we faced was that matrix A serialized resulted into:
 
 So we managed to get rid of the | 00 | cells by serializing by "hand".
 
+However, we had there some problems that this only worked for certain values. So if N=16 for example we have got correct results but for
+N=32 no results. The reason for this was, that the edge planes were for the middle rank for even iterations full of zeros but for odd ones correct.
+This was also only for one rank the case. The screenshots at /bug show the behaviour. As in bug1.jpg can be seen all values are 273 as expected.
+Then in the first iteration from the bottom and top correct planes with full of 273 are received (bug_2.png).
+But in 2nd iteration from the top a very strange plane was received as it van be obtained from bug_3.png. Interestingly, in the following iteration
+(bug_3.png) it was correct again.
+
+We have tried to debug it as intensively as possible but could not manage to solve it...
+Hence, we have written 3D mpi the same way as 2D by linearization of the matrices. 
+
 - Provide a sequential and an MPI implementation, and use MPI's virtual topologies and derived data types features for the latter
 We have used in both cases (2D and 3D) a 1D cartesian topology. 
 A multidimensional topology is according to us not useful because then only the number of ranks that have to communicate to is
@@ -62,11 +72,17 @@ This exercise consists in measuring all heat stencil variants (1D, 2D and 3D) to
 - Illustrate the data in appropriate figures and discuss them. What can you observe?
 - Measure and illustrate an application throughput metric. What can you observe?
 
-## General Notes
+We have measured it as it can be obtained from the excelsheet ex02/measurements.xslx
+We have observed strong scalability.
 
-All the material required by the tasks above (e.g. code, figures, etc...) must be part of the solution that is handed in. Your experiments should be reproducible and comparable to your own measurements using the solution materials that you hand in. For source code, please provide a makefile or other, intuitive means of compiling with the required flags and settings.
+1D:
+As it an be seen for small problem sizes the sequntial program is fairly compatitive because the overhaed of sending and receiving is higher than the parallization speeds it up.
 
-**Every** member of your group must be able to explain the given problem, your solution, and possible findings. You may also need to answer detailed questions about any of these aspects.
+For lager sizes > 1000 parallel is already twice as fast and this effects stronger and stronger.
 
-**Please run any benchmarks or heavy CPU loads only on the compute nodes, not on the login node.**
-If you want to do some interactive experimentation, use an *interactive job* as outlined in the tutorial. Make sure to stop any interactive jobs once you are done.
+2D:
+Here the parallel execution is already for small problemsizes
+significantly faster. When the problem sizes are getting bigger the speedup is tremenduous and for N=400 and 8 ranks it is even 180 
+
+3D:
+While testing 3D we had the problem that we could only test it for a problem size up to 16 because then the programm has to be aborted after 10 min. of execution. We expect that out implementation did not scale for some reason we couldn't determine while solving the exercise... 
