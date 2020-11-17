@@ -36,10 +36,11 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
+    unsigned int seed;
 
-    #pragma omp parallel for reduction(+ : num_circle_pts)
+    #pragma omp parallel for reduction(+ : num_circle_pts) private(random_x,random_y,dist,seed)
         for(unsigned long i = 0; i < nr_samples; i++){
-            unsigned int seed = (i+2)*omp_get_thread_num();
+            seed = time(NULL)+omp_get_thread_num();
             // random number between 0 and 1
             random_x = (double) rand_r(&seed) / RAND_MAX;
             random_y = (double) rand_r(&seed) / RAND_MAX;
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]){
             }
         }
     
-    pi = 4 * ((double)num_circle_pts / (double)nr_samples); 
+    pi = 4.0* ((double)num_circle_pts / (double)nr_samples); 
     double end_time = omp_get_wtime();
 
     printf("pi: %lf (%ld samples) (in %f)\n", pi,nr_samples, end_time-start_execution_time);
