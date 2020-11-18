@@ -6,7 +6,7 @@ OMP_FLAGS=-std=gnu99 -Wall -Wextra -pedantic -fopenmp
 all: heat_stencil_2D_omp
 
 heat_stencil_2D_omp: heat_stencil_2D_omp.c
-	@$(GCC) $(OMP_FLAGS) $< -o heat_stencil_2D_omp
+	@$(GCC) $(OMP_FLAGS) $< -o heat_stencil_omp
 
 .PHONEY: clean
 clean:
