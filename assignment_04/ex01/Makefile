@@ -6,7 +6,7 @@ OMP_FLAGS=-std=gnu99 -Wall -Wextra -pedantic -fopenmp
 all: pi_seq pi_openmp
 
 pi_seq: pi_seq.c
-	@$(GCC) $(GCC_FLAGS) $< -o pi.seq.c
+	@$(GCC) $(GCC_FLAGS) $< -o pi_seq
 
 pi_openmp: pi_openmp.c
 	@$(GCC) $(OMP_FLAGS) $< -o pi_openmp
