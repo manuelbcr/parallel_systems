@@ -109,3 +109,40 @@ N=300x300,
 Time: 7.406924
 N=400x400, 
 Time: 16.852238
+
+
+=====================================
+4000 x 4000 measurments
+
+1 Thread:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 41.454363
+
+2 Threads:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 20.387472
+
+3 Threads: 
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 13.310507
+
+4 Threads:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 10.066756
+ 
+5 Threads:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 8.095574
+
+6 Threads:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 6.800074
+
+7 Threads:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 5.906000
+
+8 Threads:
+Computing heat-distribution for room size N=4000x4000, for T=100 timesteps
+Time: 5.246248
+
