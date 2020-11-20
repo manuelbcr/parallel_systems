@@ -18,7 +18,23 @@ For example running the MPI program with 4 ranks and 100.000.000 samples the exe
 only 0.850719 s and is orders of magnitudes faster. 
 
 - Vary between the use of `atomic`, `critical`, and `reduction`, and vary between aggregating the intermediate `int` and final `float`/`double` data. What can you observe?
+
+The best performance we achieved by aggregating the intermediate `int` value and use `reduction` and set the other variables to private.
+
+If we use `critical` the execution time was not comparative. We also did not run tests for more than 2 rank for 1.000.000.000 samples because it just took more than 10 min. 
+
+A similar, even tough not so bad, the performance also for `atomic` got worse. 
+Also doing the reduction manually andleaving `reduction` out in the pragma causes very bad results.
+Aggregating the final `double` value instead of the `int` value shows the same effect.
+
+Especially it has to be mentioned that the performance decreased when the number of threads was increased for those cases. This is an effect we do not expect
+while parallizing a program.
+
 - Consider the performance-related topics discussed in the lecture so far. What optimization strategies would you choose and why?
+In this task the data is not dependent and therefore no communication of intermediate results between threads is needed. So all of them can independently compute
+their subresults. 
+The workload is known a priori and hence it can be distributed balanced statically. 
+
 - Add your best wall times for 10^8 samples for 1 and 8 threads in the comparison spreadsheet linked on Discord.
 
 ## Exercise 2
