@@ -24,4 +24,8 @@
 /assignment_03/ex01/3D-output-seq.dat
 /assignment_03/ex01/3D-output-mpi.dat
 
+/assignment_04/ex01/pi_openmp
+/assignment_04/ex01/pi_seq
+/assignment_04/ex02/heat_stencil_omp
+
 output.dat
