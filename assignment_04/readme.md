@@ -1,4 +1,5 @@
 # Assignment 4, due November 23rd 2020
+Buchauer, De Sclavis, Handl
 
 The goal of this assignment is to parallelize several applications with OpenMP.
 
@@ -37,6 +38,8 @@ The workload is known a priori and hence it can be distributed balanced statical
 
 - Add your best wall times for 10^8 samples for 1 and 8 threads in the comparison spreadsheet linked on Discord.
 
+First we ran the code without optimization. After seeing that our times weren't that fast, we decided to compile with `-O3` for optimization.
+
 ## Exercise 2
 
 ### Tasks
@@ -65,6 +68,11 @@ An additional strategy can be to seek for sending messages that fits in a lower 
 Another point that has to be taken into consideration is that not always increasing the number of ranks brings leads to better performances. If the problem size is rather small, say N=64x64 and it is ran on 64 ranks the communication overhead is immense and has no improvement in the performance. So the order of parallelizations should be appropriate to get most out of it.
 
 - Add your best wall times for N=4000x4000 and T=100 for 1 and 8 threads in the comparison spreadsheet linked on Discord.
+
+First we ran the code without optimization. After seeing that our times weren't that fast, we decided to compile with `-O3` for optimization.
+
+
+### All measurments from both exercises can be found in the respective measurment.xls files.
 
 ## General Notes
 

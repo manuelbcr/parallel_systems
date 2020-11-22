@@ -1,6 +1,6 @@
 GCC=gcc
 GCC_FLAGS=-std=c99 -Wall -Wextra -pedantic
-OMP_FLAGS=-std=gnu99 -Wall -Wextra -pedantic -fopenmp
+OMP_FLAGS=-std=gnu99 -Wall -Wextra -pedantic -fopenmp -O3
 
 .PHONEY: all
 all: pi_seq pi_openmp
