@@ -12,7 +12,7 @@ The goal of this assignment is to parallelize several applications with OpenMP.
 - Illustrate the data in appropriate speedup/efficiency figures and discuss them. What can you observe? How does the performance compare to your MPI implementation of Assignment 2?
 
 For this task we have measured the wall time from 10 up to 1.000.000.000 samples and as requested with 1 to 8 threads.
-The results are given in the sheet ex01/measurements.xslx and ex01/measurements.pdf.
+The results are given in the sheet ex01/measurements.xslx.
 
 In our case the performance was significantly higher for the Open MP program.
 For example running the MPI program with 4 ranks and 100.000.000 samples the execution time was about 5.577 seconds, however, the Open MP program with 4 threads took
@@ -48,7 +48,7 @@ First we ran the code without optimization. After seeing that our times weren't 
 - Measure the execution time for several problem sizes and for 1 to 8 threads.
 - Illustrate the data in appropriate speedup/efficiency figures and discuss them. What can you observe? How does the performance compare to your MPI implementation of Assignment 3?
 
-Again the measurements results can be obtained from the spreadsheet ex02/measurements.xslx or ex02/measurements.pdf
+Again the measurements results can be obtained from the spreadsheet ex02/measurements.xslx.
 We did the tests again with 1 up to 8 threads with problem sizes varying from N=50x50 up to N=400x400 with T=N*100 timesteps and in addition also with 1 to 8 threads
 N=4000x4000 but only T=100 timesteps.  
 
