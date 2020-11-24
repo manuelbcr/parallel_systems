@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
   }
 
   // particle array of length number_of_particles (temp array to switch them later)
-  particle * particle_array_a = malloc(sizeof(particle) * number_of_particles);;
-  particle * particle_array_b = malloc(sizeof(particle) * number_of_particles);;
+  particle * particle_array_a = malloc(sizeof(particle) * number_of_particles);
+  particle * particle_array_b = malloc(sizeof(particle) * number_of_particles);
   particle * particle_array_temp = NULL;
 
   // current time as seed for random generator 
