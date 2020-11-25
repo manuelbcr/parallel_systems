@@ -6,6 +6,7 @@
 
 #define G 1.0
 #define DT 0.05
+#define EPS 0.0001
 
 // particle struct
 typedef struct {
@@ -17,9 +18,9 @@ typedef struct {
 } particle;
 
 particle * init_particles(int number_of_particles, double max_x, double max_y, double max_mass);
-double compute_vector_length(double x, double y);
+double compute_squared_vector_length(double x, double y);
 double compute_force(particle particle_1, particle particle_2);
-void update_position(double unit_vector_x, double unit_vector_y, double force, particle * particle);
+void update_position(double force, particle * particle);
 void print_particle(particle particle);
 void print_particle_array(particle * particle_array, int number_of_particles);
 
@@ -66,35 +67,21 @@ int main(int argc, char **argv) {
     for(int i = 0; i < number_of_particles; i++){
 
       double force = 0.0;
-      double direction_vector_x = 0.0;
-      double direction_vector_y = 0.0;
 
       for(int j = 0; j < number_of_particles; j++){
 
         if(i != j){
-
           force += compute_force(particle_array_a[i], particle_array_a[j]); 
-
-          // direction vector a -> b = b - a  (sum the direction vectors to get one resulting direction vector)
-          direction_vector_x = direction_vector_x + (particle_array_a[j].position_x - particle_array_a[i].position_x);
-          direction_vector_y = direction_vector_y + (particle_array_a[j].position_y - particle_array_a[i].position_y);
-
         }
 
       }
 
-      double vector_length = compute_vector_length(direction_vector_x, direction_vector_y);
-
-      // calculate unit vector of direction vector
-      double unit_vector_x = direction_vector_x/vector_length;
-      double unit_vector_y = direction_vector_y/vector_length;
-
       // update in array_b to make all calculations be based on the same timestep
-      update_position(unit_vector_x, unit_vector_y, force, &particle_array_b[i]);
+      update_position(force, &particle_array_b[i]);
 
     }
 
-    //print_particle_array(particle_array_b, number_of_particles);
+    print_particle_array(particle_array_b, number_of_particles);
 
     particle_array_temp = particle_array_b;
     particle_array_b = particle_array_a;
@@ -103,32 +90,29 @@ int main(int argc, char **argv) {
   }
 }
 
-double compute_vector_length(double x, double y){
+double compute_squared_vector_length(double x, double y){
 
-  return sqrt(pow(x,2) + pow(y,2));
+  return pow(x,2) + pow(y,2);
 
 }
 
 double compute_force(particle particle_1, particle particle_2){
 
-  double direction_vector_x = 0.0;
-  double direction_vector_y = 0.0;
-
-  // direction vector a -> b = b - a
-  direction_vector_x = direction_vector_x + (particle_2.position_x - particle_1.position_x);
-  direction_vector_y = direction_vector_y + (particle_2.position_y - particle_1.position_y);
+   // direction vector a -> b = b - a
+  double direction_vector_x = particle_2.position_x - particle_1.position_x;
+  double direction_vector_y = particle_2.position_y - particle_1.position_y;
 
   // pythagoras: distance between two points
-  double distance = compute_vector_length(direction_vector_x, direction_vector_y);
-  double force = G * (particle_1.mass * particle_2.mass) / distance;
+  double squared_distance = compute_squared_vector_length(direction_vector_x, direction_vector_y);
+  double force = G * (particle_1.mass * particle_2.mass) / pow(squared_distance + EPS, 3.0/2.0);
 
   return force;
 }
 
-void update_position(double unit_vector_x, double unit_vector_y, double force, particle * particle){
+void update_position(double force, particle * particle){
 
-  particle->velocity_x = particle->velocity_x + (unit_vector_x * (force / particle->mass));
-  particle->velocity_y = particle->velocity_y + (unit_vector_y * (force / particle->mass));
+  particle->velocity_x = particle->velocity_x + force / particle->mass * DT;
+  particle->velocity_y = particle->velocity_y + force / particle->mass * DT;
 
   particle->position_x = particle->position_x + (particle->velocity_x * DT);
   particle->position_y = particle->position_y + (particle->velocity_y * DT);
@@ -146,12 +130,10 @@ void print_particle_array(particle * particle_array, int number_of_particles){
   for(int i = 0; i < number_of_particles; i++){
 
     print_particle(particle_array[i]);
-
-    if(((i % 5) == 0) && (i != 0)){
-
-      printf("\n");
-
-    }
+    
   }
+
+  printf("\n");
+
 }
 
