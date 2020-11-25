@@ -127,8 +127,8 @@ double compute_force(particle particle_1, particle particle_2){
 
 void update_position(double unit_vector_x, double unit_vector_y, double force, particle * particle){
 
-  particle->velocity_x = unit_vector_x * (force / particle->mass);
-  particle->velocity_y = unit_vector_y * (force / particle->mass);
+  particle->velocity_x = particle->velocity_x + (unit_vector_x * (force / particle->mass));
+  particle->velocity_y = particle->velocity_y + (unit_vector_y * (force / particle->mass));
 
   particle->position_x = particle->position_x + (particle->velocity_x * DT);
   particle->position_y = particle->position_y + (particle->velocity_y * DT);
