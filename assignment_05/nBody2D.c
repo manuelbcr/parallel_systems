@@ -93,9 +93,9 @@ int main(int argc, char **argv) {
 
     }
 
-    //if(t % 10 == 0){
-    //  print_particle_array(particle_array_b, number_of_particles);
-    //}
+    if(t % 10 == 0){
+      print_particle_array(particle_array_b, number_of_particles);
+    }
     
 
     particle_array_temp = particle_array_b;
@@ -105,34 +105,42 @@ int main(int argc, char **argv) {
   }
 }
 
-double compute_squared_vector_length(vector vector){
+double compute_vector_length(vector vector){
 
-  return pow(vector.x,2) + pow(vector.y,2);
+  return (double) sqrt((vector.x*vector.x) + (vector.y*vector.y));
 
 }
 
 vector compute_force(particle particle_1, particle particle_2){
 
+  double calculated_force, forcex,forcey;
   vector force;
   vector direction_vector;
-  vector unit_vector;
+  force.x=0.0;
+  force.y=0.0;
+
+  
+
 
    // direction vector a -> b = b - a
-  direction_vector.x = particle_2.position_x - particle_1.position_x;
-  direction_vector.y = particle_2.position_y - particle_1.position_y;
+  direction_vector.x = particle_1.position_x - particle_2.position_x;
+  direction_vector.y = particle_1.position_y - particle_2.position_y;
 
-  double squared_distance = compute_squared_vector_length(direction_vector);
-  // pythagoras: distance between two points
-  double distance = sqrt(squared_distance);
+  
+  double distance = compute_vector_length(direction_vector);
+  
+  double angle = atan2(particle_1.position_y-particle_2.position_y, particle_1.position_x-particle_2.position_x);
+ 
+  calculated_force= G*(particle_1.mass*particle_2.mass)/pow(distance +EPS, 3.0/2.0);
+  //helper variables
+  forcex= force.x;
+  forcey= force.y;
 
-  unit_vector.x = direction_vector.x / distance;
-  unit_vector.y = direction_vector.y / distance;
-
-  force.x = (G * (particle_1.mass * particle_2.mass) / pow(squared_distance + EPS, 3.0/2.0)) * unit_vector.x;
-  force.y = (G * (particle_1.mass * particle_2.mass) / pow(squared_distance + EPS, 3.0/2.0)) * unit_vector.y;
-
+  force.x = forcex - calculated_force * cos(angle);
+  force.y = forcey - calculated_force * sin(angle);
   return force;
 }
+
 
 void update_position(vector force, particle * particle, double max_x, double max_y){
 
@@ -142,11 +150,7 @@ void update_position(vector force, particle * particle, double max_x, double max
   double position_x = particle->position_x + (particle->velocity_x * DT);
   double position_y = particle->position_y + (particle->velocity_y * DT);
 
-  if((particle->velocity_x > 100) || (particle->velocity_y > 100)){
 
-    printf("Force (%lf, %lf)\n", force.x, force.y);
-
-  }
 
   if(position_x > max_x){
 
