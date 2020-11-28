@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include <time.h>
 #include <string.h>
 #include <math.h>
@@ -16,6 +17,7 @@ typedef struct {
   double velocity_y;
   double mass;
 } particle;
+
 
 particle * init_particles(int number_of_particles, double max_x, double max_y, double max_mass);
 double compute_squared_vector_length(double x, double y);
@@ -35,11 +37,15 @@ int main(int argc, char **argv) {
   const double max_mass = 50.0;
 
   if (argc > 2) {
-    printf("USAGE: ./nBody2D <number-of-inputs>\n");
+    printf("USAGE: ./nBody2D\nOR: ./nBody2D <number-of-inputs>\n");
     return(EXIT_FAILURE);    
   } else if(argc > 1) {
     number_of_particles = atoi(argv[1]);
   }
+
+  // start measuring time
+  struct timeval tval_start, tval_end, tval_diff;
+  gettimeofday(&tval_start, NULL);
 
   // particle array of length number_of_particles (temp array to switch them later)
   particle * particle_array_a = malloc(sizeof(particle) * number_of_particles);
@@ -88,6 +94,10 @@ int main(int argc, char **argv) {
     particle_array_a = particle_array_temp; 
 
   }
+
+  gettimeofday(&tval_end, NULL);
+  timersub(&tval_end, &tval_start, &tval_diff);
+  printf("Time elapsed: %ld.%06ld\n", (long int)tval_diff.tv_sec, (long int)tval_diff.tv_usec);
 }
 
 double compute_squared_vector_length(double x, double y){
