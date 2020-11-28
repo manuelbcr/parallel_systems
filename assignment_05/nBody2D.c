@@ -21,16 +21,17 @@ typedef struct {
 
 particle * init_particles(int number_of_particles, double max_x, double max_y, double max_mass);
 double compute_squared_vector_length(double x, double y);
-double compute_force(particle particle_1, particle particle_2);
+double compute_force(particle* particle_1, particle* particle_2);
 void update_position(double force, particle * particle);
 void print_particle(particle particle);
 void print_particle_array(particle * particle_array, int number_of_particles);
+
 
 int main(int argc, char **argv) {
 
   // runtime variables
   int number_of_particles = 10000;
-  const int number_of_timesteps = 100;
+  const int number_of_timesteps = 10;
 
   const double max_x = 100.0;
   const double max_y = 100.0;
@@ -77,7 +78,7 @@ int main(int argc, char **argv) {
       for(int j = 0; j < number_of_particles; j++){
 
         if(i != j){
-          force += compute_force(particle_array_a[i], particle_array_a[j]); 
+          force += compute_force(&particle_array_a[i], &particle_array_a[j]); 
         }
 
       }
@@ -87,7 +88,7 @@ int main(int argc, char **argv) {
 
     }
 
-    print_particle_array(particle_array_b, number_of_particles);
+    //print_particle_array(particle_array_b, number_of_particles);
 
     particle_array_temp = particle_array_b;
     particle_array_b = particle_array_a;
@@ -106,15 +107,15 @@ double compute_squared_vector_length(double x, double y){
 
 }
 
-double compute_force(particle particle_1, particle particle_2){
+double compute_force(particle* particle_1, particle* particle_2){
 
    // direction vector a -> b = b - a
-  double direction_vector_x = particle_2.position_x - particle_1.position_x;
-  double direction_vector_y = particle_2.position_y - particle_1.position_y;
+  double direction_vector_x = particle_2->position_x - particle_1->position_x;
+  double direction_vector_y = particle_2->position_y - particle_1->position_y;
 
   // pythagoras: distance between two points
   double squared_distance = compute_squared_vector_length(direction_vector_x, direction_vector_y);
-  double force = G * (particle_1.mass * particle_2.mass) / pow(squared_distance + EPS, 3.0/2.0);
+  double force = G * (particle_1->mass * particle_2->mass) / pow(squared_distance + EPS, 3.0/2.0);
 
   return force;
 }
