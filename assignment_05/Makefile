@@ -5,7 +5,7 @@ GCC_FLAGS=-std=c99 -Wall -Wextra -pedantic
 all: nBody2D 
 
 nBody2D: nBody2D.c
-	@$(GCC) $(GCC_FLAGS) $< -o nBody2D -lm -O3 -D_DEFAULT_SOURCE
+	@$(GCC) $(GCC_FLAGS) $< -o nBody2D -lm -O3 -ffast-math -D_DEFAULT_SOURCE 
 	
 .PHONEY: clean
 clean:
