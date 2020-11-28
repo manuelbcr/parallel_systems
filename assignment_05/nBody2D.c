@@ -28,17 +28,17 @@ int main(int argc, char **argv) {
 
   // runtime variables
   int number_of_particles = 10000;
-  const int number_of_timesteps = 1000;
+  const int number_of_timesteps = 100;
 
   const double max_x = 100.0;
   const double max_y = 100.0;
   const double max_mass = 50.0;
 
-  if (argc > 1) {
+  if (argc > 2) {
+    printf("USAGE: ./nBody2D <number-of-inputs>\n");
+    return(EXIT_FAILURE);    
+  } else if(argc > 1) {
     number_of_particles = atoi(argv[1]);
-  } else if(argc > 2) {
-    printf("USAGE: please provide an input for the number of particles\n");
-    return(EXIT_FAILURE);
   }
 
   // particle array of length number_of_particles (temp array to switch them later)
