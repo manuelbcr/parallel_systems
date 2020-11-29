@@ -25,7 +25,14 @@ For each timestep (you can assume e.g. `dt = 0.05`), particles must be moved by 
 	2. provide a function for computing forces and moving particles
 	3. move particles in a time loop for a given number of steps
 - Measure the execution time for various problem sizes. What can you observe?
+The measurements can be obtained from the spreadsheet: measurements.xslx
+It can be seen that the number of particles impacts the execution time quadratic, so doubling the problem size
+leadds to a 4 times longer execution time. This is as expected because it is checked all particles with each other = N*N checks.
+The number of tmesteps only affect linearly the execution time because the number of timesteps does not influence the number of particles.
+
 - Add your best sequential wall time for 10000 particles and 1000 time steps into the comparison spreadsheet linked on Discord.
+Best on our local machine = 51.876900 s
+Best on LCC2 = 310.842779 s
 
 ## Exercise 2
 
@@ -34,8 +41,20 @@ This exercise consists in investigating and planning optimization and paralleliz
 ### Tasks
 
 - Study the nature of the problem in Exercise 1, focusing on its characteristics with regard to optimization and parallelization.
+The n-body problem is about simulating the movement of N particles in space induced by the gravitational forces between them. In theory
+all N particles of the whole space have to be taken into account. This fact leads to the necessity to compute pairwise all forces to get
+the most accurate result. However, in practice particles far away influence each other only so little that they can be ignored. As a result the number
+of pairwise computations can be reduced. Relating to the parallelization of this problem it is, again, for the theoretical case where all interact with each other required that after each timestep all particles have to be exchanged. But only ranks that serve spatially close elements have to synchronize their data. 
+
 - What optimization methods can you come up with in order to improve the performance of Exercise 1?
+We had several ideas. In the first place we have tried to reduce the number of expensive operations like pow() and atan and so on by rewriting the math. Here we also managed to achieve the biggest speedup by using pythagoras to compute from the force vector its x and y components.  
+Then we focues on a minimal data traffic by passing pointers instead of whole structs. Later we have tried to reduce the number of the expensive computations of the force by compute it only for one pair, store the result and reuse the result inversed for the other case. So when force(A, B) = 10 we can use force(B, A) = -10. In our implementation it does not improved the performance, however, and we removed this again. In addition could this approach only be applied, if the memory does not play an important role and only up to a problem size to 10000. 
+Another idea is to ignore particles that are far away. So depending on how accurate the result should be, we can leave out particles that have a bigger distance and have less mass than a certain theshold.
+
 - What parallelization strategies would you consider for Exercise 1 and why?
+The most simple way to parallelize the problem would be to split the space into slices or squares and exchange all particles. This is, however,
+rather impractical. Since the effect on pairs of particles depends on the distance that is the same if the mass is equal when the radius is the same, the importance of particles decreases in circle. So squares are the most suiteable form for splitting the domain. In addition it is also only necessary to communicate with near neighbors, because further distanced ranks are not of interests since their effect can be ignored. The density of each square can vary throughout the simulation, hence, a dynamic load balancing is probably the most suitable one.   
+
 
 ## General Notes
 

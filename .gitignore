@@ -28,4 +28,8 @@
 /assignment_04/ex01/pi_seq
 /assignment_04/ex02/heat_stencil_omp
 
+/assignment_05/nBody2D
+/assignment_05/plotting/*.o
+/assignment_05/plotting/*.png
+
 output.dat
