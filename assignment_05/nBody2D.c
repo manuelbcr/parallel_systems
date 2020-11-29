@@ -136,6 +136,8 @@ vector compute_force(particle* particle_1, particle* particle_2){
 
   
   double distance = compute_vector_length(direction_vector);
+  if(distance > 50)
+    return force;
   
   double angle = atan2(particle_1->position_y - particle_2->position_y, particle_1->position_x - particle_2->position_x);
  
