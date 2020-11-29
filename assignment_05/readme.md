@@ -27,8 +27,12 @@ For each timestep (you can assume e.g. `dt = 0.05`), particles must be moved by 
 - Measure the execution time for various problem sizes. What can you observe?
 The measurements can be obtained from the spreadsheet: measurements.xslx
 It can be seen that the number of particles impacts the execution time quadratic, so doubling the problem size
-leadds to a 4 times longer execution time. This is as expected because it is checked all particles with each other = N*N checks. 
+leadds to a 4 times longer execution time. This is as expected because it is checked all particles with each other = N*N checks.
+The number of tmesteps only affect linearly the execution time because the number of timesteps does not influence the number of particles.
+
 - Add your best sequential wall time for 10000 particles and 1000 time steps into the comparison spreadsheet linked on Discord.
+Best on our local machine = 51.876900 s
+Best on LCC2 = 310.842779 s
 
 ## Exercise 2
 
