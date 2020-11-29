@@ -27,7 +27,7 @@ typedef struct {
 
 particle * init_particles(int number_of_particles, double max_x, double max_y, double max_mass);
 double compute_squared_vector_length(vector vector);
-vector compute_force(particle particle_1, particle particle_2);
+vector compute_force(particle* particle_1, particle* particle_2);
 void update_position(vector force, particle * particle, double max_x, double max_y);
 void print_particle(particle particle);
 void print_particle_array(particle * particle_array, int number_of_particles);
@@ -36,8 +36,8 @@ void plot_particle_array(particle * particle_array, int number_of_particles, int
 int main(int argc, char **argv) {
 
   // runtime variables
-  int number_of_particles = 4000;
-  const int number_of_timesteps = 100;
+  int number_of_particles = 1000;
+  const int number_of_timesteps = 400;
 
   const double max_x = 150.0;
   const double max_y = 150.0;
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
       for(int j = 0; j < number_of_particles; j++){
 
         if(i != j){
-          vector computed = compute_force(particle_array_a[i], particle_array_a[j]); 
+          vector computed = compute_force(&particle_array_a[i], &particle_array_a[j]); 
           force.x += computed.x;
           force.y += computed.y;
           
@@ -115,36 +115,27 @@ double compute_vector_length(vector vector){
 
 }
 
-vector compute_force(particle particle_1, particle particle_2){
+vector compute_force(particle* particle_1, particle* particle_2){
 
-  double calculated_force, forcex,forcey;
+  double calculated_force;
   vector force;
   vector direction_vector;
   force.x=0.0;
   force.y=0.0;
 
-  
-
-
    // direction vector a -> b = b - a
-  direction_vector.x = particle_1.position_x - particle_2.position_x;
-  direction_vector.y = particle_1.position_y - particle_2.position_y;
+  direction_vector.x = particle_1->position_x - particle_2->position_x;
+  direction_vector.y = particle_1->position_y - particle_2->position_y;
 
   
   double distance = compute_vector_length(direction_vector);
+  double d_eps = distance + EPS;
+  calculated_force = G*(particle_1->mass*particle_2->mass)/sqrt(d_eps*d_eps*d_eps);
   
-  double angle = atan2(particle_1.position_y-particle_2.position_y, particle_1.position_x-particle_2.position_x);
- 
-  calculated_force= G*(particle_1.mass*particle_2.mass)/pow(distance +EPS, 3.0/2.0);
-  //helper variables
-  forcex= force.x;
-  forcey= force.y;
-
-  force.x = forcex - calculated_force * cos(angle);
-  force.y = forcey - calculated_force * sin(angle);
+  force.x -= calculated_force/distance * direction_vector.x;
+  force.y -= calculated_force/distance * direction_vector.y;
   return force;
 }
-
 
 void update_position(vector force, particle * particle, double max_x, double max_y){
 
