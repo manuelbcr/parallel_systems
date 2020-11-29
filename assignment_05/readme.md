@@ -25,6 +25,9 @@ For each timestep (you can assume e.g. `dt = 0.05`), particles must be moved by 
 	2. provide a function for computing forces and moving particles
 	3. move particles in a time loop for a given number of steps
 - Measure the execution time for various problem sizes. What can you observe?
+The measurements can be obtained from the spreadsheet: measurements.xslx
+It can be seen that the number of particles impacts the execution time quadratic, so doubling the problem size
+leadds to a 4 times longer execution time. This is as expected because it is checked all particles with each other = N*N checks. 
 - Add your best sequential wall time for 10000 particles and 1000 time steps into the comparison spreadsheet linked on Discord.
 
 ## Exercise 2
