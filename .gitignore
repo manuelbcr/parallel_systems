@@ -32,4 +32,6 @@
 /assignment_05/plotting/*.o
 /assignment_05/plotting/*.png
 
+/assignment_06/ex01/nBody2D_omp
+
 output.dat
