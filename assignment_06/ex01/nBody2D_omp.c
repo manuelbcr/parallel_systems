@@ -4,6 +4,9 @@
 #include <time.h>
 #include <string.h>
 #include <math.h>
+#include <omp.h>
+
+
 
 #define G 1.0
 #define DT 0.05
@@ -30,6 +33,14 @@ vector compute_force(particle* particle_1, particle* particle_2);
 void update_position(vector force, particle * particle, double max_x, double max_y);
 void print_particle(particle* particle);
 void print_particle_array(particle * particle_array, int number_of_particles);
+
+#ifdef PLOT
+
+#include "pbPlots.h"
+#include "supportLib.h"
+void plot_particle_array(particle * particle_array, int number_of_particles, int p);
+
+#endif
 
 
 int main(int argc, char **argv) {
@@ -63,6 +74,7 @@ int main(int argc, char **argv) {
   srand(time(NULL));
 
   // initialize arrays
+  // TODO: test it if gets faster if we parallelize also this step...
   for(int i = 0; i < number_of_particles; i++){
 
     particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * max_x; 
@@ -106,6 +118,11 @@ int main(int argc, char **argv) {
       print_particle_array(particle_array_b, number_of_particles);
     }
     
+    #ifdef PLOT
+    // plot current state
+    plot_particle_array(particle_array_b,number_of_particles,t);
+    #endif
+
 
     particle_array_temp = particle_array_b;
     particle_array_b = particle_array_a;
@@ -116,7 +133,7 @@ int main(int argc, char **argv) {
   gettimeofday(&tval_end, NULL);
   long timediff_s = tval_end.tv_sec - tval_start.tv_sec;
   long timediff_ms = ((timediff_s*1000000) + tval_end.tv_usec) - tval_start.tv_usec;
-  printf("Time elapsed: %ld.%06ld\n", timediff_s, timediff_ms);
+  printf("Time elapsed: %ld.%06ld\n", timediff_s, timediff_ms);  
 }
 
 double compute_vector_length(vector vector){
@@ -212,3 +229,56 @@ void print_particle_array(particle * particle_array, int number_of_particles){
 
 }
 
+
+#ifdef PLOT
+
+void plot_particle_array(particle * particle_array, int number_of_particles, int p){
+  double xs[number_of_particles];
+  double ys[number_of_particles];
+
+  for(int i= 0; i< number_of_particles; i++){
+    xs[i]= particle_array[i].position_x;
+    ys[i]= particle_array[i].position_y;
+  }
+
+RGBABitmapImageReference *imageReference = CreateRGBABitmapImageReference();
+
+	ScatterPlotSeries *series = GetDefaultScatterPlotSeriesSettings();
+	series->xs = xs;
+	series->xsLength = sizeof(xs)/sizeof(double);
+	series->ys = ys;
+	series->ysLength = sizeof(ys)/sizeof(double);
+	series->linearInterpolation = false;
+	series->pointType = L"dots";
+	series->pointTypeLength = wcslen(series->pointType);
+	series->color = CreateRGBColor(1, 0, 0);
+
+
+	ScatterPlotSettings *settings = GetDefaultScatterPlotSettings();
+	settings->width = 600;
+	settings->height = 400;
+	settings->autoBoundaries = true;
+	settings->autoPadding = true;
+	settings->title = L"";
+	settings->titleLength = wcslen(settings->title);
+	settings->xLabel = L"";
+	settings->xLabelLength = wcslen(settings->xLabel);
+	settings->yLabel = L"";
+	settings->yLabelLength = wcslen(settings->yLabel);
+	ScatterPlotSeries *s [] = {series};
+	settings->scatterPlotSeries = s;
+	settings->scatterPlotSeriesLength = 1;
+
+	DrawScatterPlotFromSettings(imageReference, settings);
+
+  char buffer[80];
+  int output_len;
+  output_len = snprintf( buffer, 80, "img%d.png",p);
+
+	size_t length;
+	double *pngdata = ConvertToPNG(&length, imageReference->image);
+	WriteToFile(pngdata, length, buffer);
+	DeleteImage(imageReference->image);
+}
+
+#endif
