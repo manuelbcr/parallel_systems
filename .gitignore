@@ -33,5 +33,13 @@
 /assignment_05/plotting/*.png
 
 /assignment_06/ex01/nBody2D_omp
+/assignment_06/ex01/nBody2D_omp_plot
+/assignment_06/ex01/*.o
+/assignment_06/ex01/plot/*.png
+/assignment_06/ex02/nBody2D_omp
+/assignment_06/ex02/nBody2D_omp_plot
+/assignment_06/ex02/*.o
+/assignment_06/ex02/plot/*.png
+
 
 output.dat
