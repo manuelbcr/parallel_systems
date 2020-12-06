@@ -38,19 +38,23 @@ int main(int argc, char **argv) {
 
   // runtime variables
   int number_of_particles = 10000;
-  const int number_of_timesteps = 100;
+  int number_of_timesteps = 100;
 
   const double max_x = 100.0;
   const double max_y = 100.0;
   const double max_mass = 50.0;
 
-  if (argc > 2) {
-    printf("USAGE: ./nBody2D\nOR: ./nBody2D <number-of-inputs>\n");
-    return(EXIT_FAILURE);    
-  } 
-  else if(argc > 1) {
+    if (argc > 3) {
+      printf("USAGE: ./nBody2D\nOR: ./nBody2D <number-of-inputs>\nOR: ./nBody2D <number-of-inputs> <number-of-timesteps>\n");
+      return(EXIT_FAILURE);    
+   } 
+   else if(argc == 3) {
+    number_of_timesteps = atoi(argv[2]);
     number_of_particles = atoi(argv[1]);
-  }
+   }
+   else if(argc == 2) {
+     number_of_particles = atoi(argv[1]);
+   }
   
   // start measuring time
   struct timeval tval_start, tval_end, tval_diff;
@@ -64,7 +68,6 @@ int main(int argc, char **argv) {
   // current time as seed for random generator 
   srand(time(NULL));
 
-  
   // initialize arrays
   for(int i = 0; i < number_of_particles; i++){
 
@@ -79,9 +82,10 @@ int main(int argc, char **argv) {
   // simulate for number_of_timesteps timesteps
   for(int t = 0; t < number_of_timesteps; t++){
 
-    printf("######## Timestep %d###########\n",t);
+    //printf("######## Timestep %d###########\n",t);
 
     // for each particle
+    #pragma omp parallel for
     for(int i = 0; i < number_of_particles; i++){
 
       vector force;
@@ -105,9 +109,9 @@ int main(int argc, char **argv) {
     }
 
     // print each 10-th state
-    if(t % 10 == 0){
-      print_particle_array(particle_array_b, number_of_particles);
-    }
+//    if(t % 10 == 0){
+//      print_particle_array(particle_array_b, number_of_particles);
+//    }
     
 
     particle_array_temp = particle_array_b;
@@ -185,56 +189,36 @@ void update_position(vector force, particle * particle, double max_x, double max
 
   if(position_x > max_x){
 
-    //printf("[positon_x > max]: \n");
-    //printf("position before: %lf\n", position_x);
-
-    // bounce of wall (invert velocity_x)
     particle->velocity_x = particle->velocity_x * -1;
     position_x = max_x + (particle->velocity_x * DT);
-
-    //printf("velocity after: %lf\n", particle->velocity_x);
-    //printf("position after: %lf\n", position_x);
   }
 
    if(position_x < 0.0){
 
-    //printf("[positon_x > max]: \n");
-    //printf("position before: %lf\n", position_x);
 
     // bounce of wall (invert velocity_x)
     particle->velocity_x = particle->velocity_x * -1;
     position_x = 0.0 + (particle->velocity_x * DT);
 
-    //printf("velocity after: %lf\n", particle->velocity_x);
-    //printf("position after: %lf\n", position_x);
 
   }
 
   if(position_y > max_y){
 
-    //printf("[positon_y > max]: \n");
-    //printf("position before: %lf\n", position_y);
 
     // bounce of wall (invert velocity_y)
     particle->velocity_y = particle->velocity_y * -1;
     position_y = max_y + (particle->velocity_y * DT);
 
-    //printf("velocity after: %lf\n", particle->velocity_y);
-    //printf("position after: %lf\n", position_y);
 
   }
 
   if(position_y < 0.0){
 
-    //printf("[positon_y < 0]: \n");
-    //printf("position before: %lf\n", position_y);
-
     // bounce of wall (invert velocity_y)
     particle->velocity_y = particle->velocity_y * -1;
     position_y = 0.0 + (particle->velocity_y * DT);
 
-    //printf("velocity after: %lf\n", particle->velocity_y);
-    //printf("position after: %lf\n", position_y);
 
   }
   
