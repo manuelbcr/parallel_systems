@@ -141,9 +141,9 @@ int main(int argc, char **argv) {
     }
 
     // print each 10-th state
-    if(t % 10 == 0){
-      print_particle_array(particle_array_b, number_of_particles);
-    }
+    //if(t % 10 == 0){
+    //  print_particle_array(particle_array_b, number_of_particles);
+    //}
     
     #ifdef PLOT
     // plot current state
