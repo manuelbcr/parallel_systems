@@ -41,15 +41,25 @@ typedef struct quadtree_node{
 } quadtree_node;
 
 
+// computing force the effective force on a particle for a given tree
 vector compute_force(particle* current_particle, quadtree_node* tree);
+// compute new position of a particle for a given force
 void update_position(vector force, particle * particle, double max_x, double max_y);
+// printing particle position to stdout
 void print_particle(particle* particle);
+// print whole array of particles
 void print_particle_array(particle * particle_array, int number_of_particles);
+// creating a new tree node 
 quadtree_node* create_tree_node(particle* particle, double min_x, double max_x, double min_y, double max_y);
+// free complete tree again
 void destroy_tree(quadtree_node* root);
+// add a particle to a tree
 void add_particle(quadtree_node* tree, particle* particle);
+// recursively walk through tree and set masses of nodes based on children
 particle* set_node_mass(quadtree_node* tree);
+// compute threshold theta to decide if node can be used for force computation 
 double compute_theta(quadtree_node* current_node, particle* particle);
+// check whether a node is a leaf without a particle (=2), leaf with particle (=1) or internal node (=0)
 int is_leaf(quadtree_node* node);
 
 #ifdef PLOT
@@ -101,10 +111,12 @@ int main(int argc, char **argv) {
   for(int i = 0; i < number_of_particles; i++){
     int world_size_x = max_x;
     int world_size_y = max_y;
+
+    // for load imbalance put every second particle in nw
     #ifdef LOAD_IMBALANCE
     if(i%2 == 0){
-      world_size_x = max_x * 0.1;
-      world_size_y = max_y * 0.1;
+      world_size_x = max_x * 0.5;
+      world_size_y = max_y * 0.5;
     }
     #endif
     particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * world_size_x; 
@@ -117,12 +129,13 @@ int main(int argc, char **argv) {
   // simulate for number_of_timesteps timesteps
   for(int t = 0; t < number_of_timesteps; t++){
 
-    //printf("######## Timestep %d###########\n",t);
+    printf("######## Timestep %d###########\n",t);
     // create quadtree
     quadtree_node *tree;
     tree = create_tree_node(NULL, 0, max_x, 0, max_y);
 
-    #pragma omp parallel for schedule(guided, 8) 
+    // parallelized for loop
+    #pragma omp parallel for schedule(guided, 4) 
     for(int i = 0; i < number_of_particles; i++)
       add_particle(tree, &particle_array_a[i]);
     
@@ -130,36 +143,38 @@ int main(int argc, char **argv) {
     set_node_mass(tree);
     
     // for each particle
-    #pragma omp parallel for schedule(guided, 8) 
+    #pragma omp parallel for schedule(guided, 4) 
     for(int i = 0; i < number_of_particles; i++){
       // compute force
       vector force = compute_force(&particle_array_a[i], tree);
       
       // update in array_b instead of array_a to make all calculations be based on the same timestep      
       update_position(force, &particle_array_b[i], max_x, max_y);
-
     }
 
     // print each 10-th state
-    //if(t % 10 == 0){
-    //  print_particle_array(particle_array_b, number_of_particles);
-    //}
+    if(t % 10 == 0){
+      print_particle_array(particle_array_b, number_of_particles);
+    }
 
     #ifdef PLOT
     // plot current state
     plot_particle_array(particle_array_b,number_of_particles,t);
     #endif
 
-
+    // swap working particle arrays
     particle_array_temp = particle_array_b;
     particle_array_b = particle_array_a;
     particle_array_a = particle_array_temp; 
+    // free tree of this iteration
     destroy_tree(tree);
   }
 
+  // free particle arrays
   free(particle_array_a);
   free(particle_array_b);
 
+  // finish time measuring
   gettimeofday(&tval_end, NULL);
   long timediff_s = tval_end.tv_sec - tval_start.tv_sec;
   long timediff_ms = ((timediff_s*1000000) + tval_end.tv_usec) - tval_start.tv_usec;
@@ -167,9 +182,7 @@ int main(int argc, char **argv) {
 }
 
 double compute_vector_length(vector vector){
-
   return (double) sqrt((vector.x*vector.x) + (vector.y*vector.y));
-
 }
 
 vector compute_force(particle* current_particle, quadtree_node* tree){
@@ -181,15 +194,10 @@ vector compute_force(particle* current_particle, quadtree_node* tree){
     return force;
   }
   
+  // compute theta to decide whether it is necessary to go one step down
   double theta = compute_theta(tree, current_particle);
   if(theta < 1){
     particle* node_particle = tree->particle;
-    //double diff_x = node_particle->position_x - current_particle->position_x;
-    //double diff_y = node_particle->position_y - current_particle->position_y;
-    //double denom_xy = sqrt(diff_x*diff_x + diff_y*diff_y);
-    //force.x = G * node_particle->mass * current_particle->mass * (1/(denom_xy*denom_xy*denom_xy)) * diff_x;
-    //force.y = G * node_particle->mass * current_particle->mass * (1/(denom_xy*denom_xy*denom_xy)) * diff_y; 
-    
 
     double calculated_force;
     vector direction_vector;
@@ -210,6 +218,7 @@ vector compute_force(particle* current_particle, quadtree_node* tree){
     
   }
   else{
+    // sum forces of all child-nodes
     for(int i = 0; i < 4; i++){
       if(i == 0)
         tmp_force = compute_force(current_particle, tree->nw);
@@ -228,7 +237,6 @@ vector compute_force(particle* current_particle, quadtree_node* tree){
 }
 
 
-// compute theta to determine if node is suitable
 double compute_theta(quadtree_node* current_node, particle* particle){
   double dx = current_node->particle->position_x - particle->position_x;
   double dy = current_node->particle->position_y - particle->position_y;
@@ -244,39 +252,29 @@ void update_position(vector force, particle * particle, double max_x, double max
   double position_x = particle->position_x + (particle->velocity_x * DT);
   double position_y = particle->position_y + (particle->velocity_y * DT);
 
-
-
   if(position_x > max_x){
-
     // bounce of wall (invert velocity_x)
     particle->velocity_x = particle->velocity_x * -1;
     position_x = max_x + (particle->velocity_x * DT);
-
   }
 
 
-   if(position_x < 0.0){
-
+  if(position_x < 0.0){
     // bounce of wall (invert velocity_x)
     particle->velocity_x = particle->velocity_x * -1;
     position_x = 0.0 + (particle->velocity_x * DT);
-
   }
 
   if(position_y > max_y){
-
     // bounce of wall (invert velocity_y)
     particle->velocity_y = particle->velocity_y * -1;
     position_y = max_y + (particle->velocity_y * DT);
-
   }
 
   if(position_y < 0.0){
-
     // bounce of wall (invert velocity_y)
     particle->velocity_y = particle->velocity_y * -1;
     position_y = 0.0 + (particle->velocity_y * DT);
-
   }
   
   particle->position_x = position_x;
@@ -285,26 +283,23 @@ void update_position(vector force, particle * particle, double max_x, double max
 }
 
 void print_particle(particle* particle){
-
   printf("%lf, %lf;", particle->position_x, particle->position_y);
-
 }
 
 void print_particle_array(particle * particle_array, int number_of_particles){
 
   for(int i = 0; i < number_of_particles; i++){
-
-    print_particle(&particle_array[i]);
-    
+    print_particle(&particle_array[i]);    
   }
 
   printf("\n");
 
 }
 
-// create tree node - if particle = NULL it does not hold any particle
+// create tree node - if particle = NULL it does not hold any particle :: other values are coordinate range of node
 quadtree_node* create_tree_node(particle* particle, double min_x, double max_x, double min_y, double max_y){
   quadtree_node* new_node = (quadtree_node*) malloc(sizeof(quadtree_node));
+  
   new_node->nw = NULL;
   new_node->ne = NULL;
   new_node->sw = NULL;
@@ -336,7 +331,6 @@ void destroy_tree(quadtree_node* root){
   if(root->se != NULL)
     destroy_tree(root->se);
 
-
   free(root);
 }
 
@@ -353,21 +347,20 @@ void add_particle(quadtree_node* tree, particle* new_particle){
   // case of node split (node_type = -1)
   node_type = (tree->particle == new_particle) ? -1 : node_type;
   
-  //printf("%p (type=%d): range[%f-%f, %f-%f] - particle=%p :: add=%p(%f, %f)\n", (void*)tree, node_type, tree->min_x, tree->max_x, tree->min_y, tree->max_y, (void*)tree->particle, (void*)new_particle, new_particle->position_x, new_particle->position_y);
-  
   // empty leaf can be filled
   if(node_type == 2){
     tree->particle = new_particle;
   }
-  // if filled leaf -> split it
   else if(node_type == 1){
+    // if filled leaf -> split it
     add_particle(tree, tree->particle);    
     add_particle(tree, new_particle);
     tree->particle = NULL;
-  }
-  // as long as no leaf - call recursively
+  }  
   else{
+    // as long as no leaf - call recursively
     if(new_particle->position_x <= tree->min_x+x_half && new_particle->position_y <= tree->min_y+y_half){
+      // if node split = -1 then create node
       if(node_type == -1)
         tree->nw = create_tree_node(NULL, tree->min_x, tree->min_x+x_half, tree->min_y, tree->min_y+y_half);
         
@@ -397,17 +390,19 @@ void add_particle(quadtree_node* tree, particle* new_particle){
 // function to add an particle to the quadtree
 particle* set_node_mass(quadtree_node* tree){
   particle* new_mass = NULL;
+
+  // check whether it is leaf
   int node_type = is_leaf(tree);
   if((tree == NULL) || node_type == 2){
+    // empty leafs have no mass
     return NULL;
   }
   else if(node_type == 1){
+    // if leaf mass equals particle
     new_mass = tree->particle;
-    //new_mass->mass = tree->particle->mass;
-    //new_mass->position_x = tree->particle->position_x;
-    //new_mass->position_y = tree->particle->position_y;
   }
   else{
+    // otherwise take weighted masses
     new_mass = (particle*) malloc(sizeof(particle));
     new_mass->mass = 0.0;
     new_mass->position_x = 0.0;
@@ -445,6 +440,7 @@ particle* set_node_mass(quadtree_node* tree){
 
 // check whether a node is a empty leaf = no particle (2) or a filled leaf (1) or no leaf at all (0)
 int is_leaf(quadtree_node* node){
+  // if no node then it is no leaf
   if(node == NULL){
     return 0;
   }
