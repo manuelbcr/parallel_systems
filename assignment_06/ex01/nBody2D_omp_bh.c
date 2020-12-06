@@ -6,8 +6,6 @@
 #include <math.h>
 #include <omp.h>
 
-
-
 #define G 1.0
 #define DT 0.05
 #define EPS 0.0001
@@ -109,18 +107,8 @@ int main(int argc, char **argv) {
 
   // initialize arrays
   for(int i = 0; i < number_of_particles; i++){
-    int world_size_x = max_x;
-    int world_size_y = max_y;
-
-    // for load imbalance put every second particle in nw
-    #ifdef LOAD_IMBALANCE
-    if(i%2 == 0){
-      world_size_x = max_x * 0.5;
-      world_size_y = max_y * 0.5;
-    }
-    #endif
-    particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * world_size_x; 
-    particle_array_a[i].position_y = particle_array_b[i].position_y = ((double)rand() / RAND_MAX) * world_size_y; 
+    particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * max_x; 
+    particle_array_a[i].position_y = particle_array_b[i].position_y = ((double)rand() / RAND_MAX) * max_y; 
     particle_array_a[i].velocity_x = particle_array_b[i].velocity_x = 0.0;
     particle_array_a[i].velocity_y = particle_array_b[i].velocity_y = 0.0;
     particle_array_a[i].mass = particle_array_b[i].mass = ((double)rand() / RAND_MAX) * max_mass;   
@@ -135,7 +123,7 @@ int main(int argc, char **argv) {
     tree = create_tree_node(NULL, 0, max_x, 0, max_y);
 
     // parallelized for loop
-    #pragma omp parallel for schedule(guided, 4) 
+    #pragma omp parallel 
     for(int i = 0; i < number_of_particles; i++)
       add_particle(tree, &particle_array_a[i]);
     
@@ -143,7 +131,7 @@ int main(int argc, char **argv) {
     set_node_mass(tree);
     
     // for each particle
-    #pragma omp parallel for schedule(guided, 4) 
+    #pragma omp parallel for
     for(int i = 0; i < number_of_particles; i++){
       // compute force
       vector force = compute_force(&particle_array_a[i], tree);
@@ -153,7 +141,7 @@ int main(int argc, char **argv) {
     }
 
     // print each 10-th state
-    if(t % 100 == 0){
+    if(t % 10 == 0){
       print_particle_array(particle_array_b, number_of_particles);
     }
 

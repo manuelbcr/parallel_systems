@@ -6,6 +6,11 @@ The goal of this assignment is to implement your parallelization and optimizatio
 
 ## Exercise 1
 
+For all both exercises Makefiles is given. So the compiling should be done by simply calling 'make'.
+For ex01/ there is a nBody2D_omp.c that is the simple parallelized version of assignment 5. The nBody2D_omp_bh.c is the barens-hut implementation.
+For ex02/ the nBody2D_omp.c is the barens-hut implementation with additional scheduling defined.
+For both exercises also a nBody2D_omp_plot is compiled in order to build an executable that prints the current state into PNG images. 
+
 ### Tasks
 
 - Provide an OpenMP implementation of your parallelization and optimization plan for the n-body simulation of Assignment 5.
@@ -32,9 +37,6 @@ satisfying speedup and bring the complexity from O(n^2) to O(n*log(n)).. To meas
 
     In terms of the parallelization of the naive version from Assignemnt 5, we expected the speedup to fall in the range of the results we achieved, as for example the 8 thread version yields a speedup of approximately 7.9. In terms of parallelization and optimization with barnes-hut, we expected an increase of speedup compared to the normal parallelization of the naive approach, however our expectations were exceeded by the results we achieved. 
     All the provided measurements and some more are provided in the excel spreadsheet of this Assignement.
-
-
-
 
 - Add your best parallel wall time for 8 threads, 10000 particles, and 100 time steps into the comparison spreadsheet linked on Discord.
 Our  best performance was achieved with -O3 and -ffast-math. We neededto compile with -O3 because otherwise we have got a segmentation fault on the LCC2. On our local machines it always worked perfectly: 0.033s
