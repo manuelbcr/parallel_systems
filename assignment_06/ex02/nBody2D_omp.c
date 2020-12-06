@@ -103,8 +103,8 @@ int main(int argc, char **argv) {
     int world_size_y = max_y;
     #ifdef LOAD_IMBALANCE
     if(i%2 == 0){
-      world_size_x = max_x * 0.5;
-      world_size_y = max_y * 0.5;
+      world_size_x = max_x * 0.1;
+      world_size_y = max_y * 0.1;
     }
     #endif
     particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * world_size_x; 
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
     quadtree_node *tree;
     tree = create_tree_node(NULL, 0, max_x, 0, max_y);
 
-    #pragma omp parallel for 
+    #pragma omp parallel for schedule(guided, 8) 
     for(int i = 0; i < number_of_particles; i++)
       add_particle(tree, &particle_array_a[i]);
     
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
     set_node_mass(tree);
     
     // for each particle
-    #pragma omp parallel for 
+    #pragma omp parallel for schedule(guided, 8) 
     for(int i = 0; i < number_of_particles; i++){
       // compute force
       vector force = compute_force(&particle_array_a[i], tree);
