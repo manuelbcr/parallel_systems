@@ -3,11 +3,15 @@ GCC_FLAGS=-std=c99 -Wall -Wextra -pedantic
 OMP_FLAGS=-std=gnu99 -Wall -Wextra -pedantic -fopenmp -O3
 
 .PHONEY: all
-all: nBody2D_omp nBody2D_omp_plot 
+all: nBody2D_omp nBody2D_omp_plot nBody2D_omp_limb
 
 nBody2D_omp: nBody2D_omp.c
 	@$(GCC) $(OMP_FLAGS) $< -o nBody2D_omp -ffast-math -lm
 	
+nBody2D_omp_limb: nBody2D_omp.c
+	@$(GCC) $(OMP_FLAGS) $< -o nBody2D_omp_limb -ffast-math -lm -DLOAD_IMBALANCE
+	
+
 nBody2D_omp_plot: nBody2D_omp.c
 	@$(GCC) -c pbPlots.c -std=c99 -O3 -march=native
 	@$(GCC) -c supportLib.c -std=c99 -O3 -march=native
@@ -18,3 +22,4 @@ nBody2D_omp_plot: nBody2D_omp.c
 clean:
 	@rm nBody2D_omp
 	@rm nBody2D_omp_plot
+	@rm nBody2D_omp_limb

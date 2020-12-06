@@ -27,9 +27,6 @@ typedef struct {
   double y;
 } vector;
 
-
-
-
 // quadtree node struct (north-west, north-east, south-west, south-east)
 typedef struct quadtree_node{
   struct quadtree_node* nw;
@@ -44,9 +41,6 @@ typedef struct quadtree_node{
 } quadtree_node;
 
 
-
-particle * init_particles(int number_of_particles, double max_x, double max_y, double max_mass);
-double compute_squared_vector_length(vector vector);
 vector compute_force(particle* current_particle, quadtree_node* tree);
 void update_position(vector force, particle * particle, double max_x, double max_y);
 void print_particle(particle* particle);
@@ -73,10 +67,12 @@ int main(int argc, char **argv) {
   int number_of_particles = 10000;
   int number_of_timesteps = 100;
 
+  // size of world
   const double max_x = 100.0;
   const double max_y = 100.0;
   const double max_mass = 50.0;
 
+  // get commandline arguments
   if (argc > 3) {
     printf("USAGE: ./nBody2D\nOR: ./nBody2D <number-of-inputs>\nOR: ./nBody2D <number-of-inputs> <number-of-timesteps>\n");
     return(EXIT_FAILURE);    
@@ -102,26 +98,30 @@ int main(int argc, char **argv) {
   srand(time(NULL));
 
   // initialize arrays
-  // TODO: test it if gets faster if we parallelize also this step...
   for(int i = 0; i < number_of_particles; i++){
-
-    particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * max_x; 
-    particle_array_a[i].position_y = particle_array_b[i].position_y = ((double)rand() / RAND_MAX) * max_y; 
+    int world_size_x = max_x;
+    int world_size_y = max_y;
+    #ifdef LOAD_IMBALANCE
+    if(i%2 == 0){
+      world_size_x = max_x * 0.5;
+      world_size_y = max_y * 0.5;
+    }
+    #endif
+    particle_array_a[i].position_x = particle_array_b[i].position_x = ((double)rand() / RAND_MAX) * world_size_x; 
+    particle_array_a[i].position_y = particle_array_b[i].position_y = ((double)rand() / RAND_MAX) * world_size_y; 
     particle_array_a[i].velocity_x = particle_array_b[i].velocity_x = 0.0;
     particle_array_a[i].velocity_y = particle_array_b[i].velocity_y = 0.0;
-    particle_array_a[i].mass = particle_array_b[i].mass = ((double)rand() / RAND_MAX) * max_mass; 
-  
+    particle_array_a[i].mass = particle_array_b[i].mass = ((double)rand() / RAND_MAX) * max_mass;   
   }
-  
-  
-  
+    
   // simulate for number_of_timesteps timesteps
   for(int t = 0; t < number_of_timesteps; t++){
 
-    printf("######## Timestep %d###########\n",t);
+    //printf("######## Timestep %d###########\n",t);
     // create quadtree
     quadtree_node *tree;
     tree = create_tree_node(NULL, 0, max_x, 0, max_y);
+
     #pragma omp parallel for 
     for(int i = 0; i < number_of_particles; i++)
       add_particle(tree, &particle_array_a[i]);
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
     for(int i = 0; i < number_of_particles; i++){
       // compute force
       vector force = compute_force(&particle_array_a[i], tree);
-      //printf("force[%f, %f]\n", force.x, force.y);
+      
       // update in array_b instead of array_a to make all calculations be based on the same timestep      
       update_position(force, &particle_array_b[i], max_x, max_y);
 
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
     //if(t % 10 == 0){
     //  print_particle_array(particle_array_b, number_of_particles);
     //}
-    
+
     #ifdef PLOT
     // plot current state
     plot_particle_array(particle_array_b,number_of_particles,t);
@@ -253,6 +253,7 @@ void update_position(vector force, particle * particle, double max_x, double max
     position_x = max_x + (particle->velocity_x * DT);
 
   }
+
 
    if(position_x < 0.0){
 
