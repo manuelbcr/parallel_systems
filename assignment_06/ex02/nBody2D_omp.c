@@ -122,11 +122,15 @@ int main(int argc, char **argv) {
     // create quadtree
     quadtree_node *tree;
     tree = create_tree_node(NULL, 0, max_x, 0, max_y);
+    #pragma omp parallel for 
     for(int i = 0; i < number_of_particles; i++)
       add_particle(tree, &particle_array_a[i]);
+    
     // set node weights
     set_node_mass(tree);
+    
     // for each particle
+    #pragma omp parallel for 
     for(int i = 0; i < number_of_particles; i++){
       // compute force
       vector force = compute_force(&particle_array_a[i], tree);
