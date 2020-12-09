@@ -42,5 +42,8 @@
 /assignment_06/ex02/*.o
 /assignment_06/ex02/*.png
 
+/assignment_07/ex01/heat_stencil_1D_seq
+/assignment_07/ex01/heat_stencil_1D_mpi
+/assignment_07/ex01/heat_stencil_checker
 
 output.dat
