@@ -122,8 +122,6 @@ int main(int argc, char **argv) {
     quadtree_node *tree;
     tree = create_tree_node(NULL, 0, max_x, 0, max_y);
 
-    // parallelized for loop
-    #pragma omp parallel 
     for(int i = 0; i < number_of_particles; i++)
       add_particle(tree, &particle_array_a[i]);
     

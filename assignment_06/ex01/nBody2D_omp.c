@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
   
   }
   double start_execution_time = omp_get_wtime();
+  
   // simulate for number_of_timesteps timesteps
   for(int t = 0; t < number_of_timesteps; t++){
 
