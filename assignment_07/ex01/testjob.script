@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#$ -q std.q
+#$ -cwd
+#$ -N my_test_job
+#$ -o output_test.dat
+#$ -j yes
+
+#$ -pe openmpi-fillup 8
+
+module load openmpi/3.1.1
+
+export OMP_NUM_THREADS=4
+
+mpiexec ./hybrid_test 
+
+
+

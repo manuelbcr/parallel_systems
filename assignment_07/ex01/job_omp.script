@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#$ -q std.q
+#$ -cwd
+#$ -N my_test_job
+#$ -o omp_output.dat
+#$ -j yes
+#$ -l h_vmem=1G
+
+#$ -pe openmpi-fillup 8
+
+module load openmpi/3.1.1
+
+export OMP_NUM_THREADS=$NSLOTS
+
+mpiexec -n 8 ./heat_stencil_1D_mpi_omp 100 
+
+
+

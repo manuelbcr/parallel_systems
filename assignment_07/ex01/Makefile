@@ -1,9 +1,16 @@
 CC= mpicc
 GCC=gcc
 CC_FLAGS=-O2 -std=c99 -Wall -Wextra -pedantic
+OMP_FLAGS=-std=gnu99 -Wall -Wextra -pedantic -fopenmp 
 
 .PHONEY: all
-all: heat_stencil_1D_seq heat_stencil_1D_mpi heat_stencil_checker
+all: hybrid_test heat_stencil_1D_mpi_omp heat_stencil_1D_seq heat_stencil_1D_mpi heat_stencil_checker
+
+hybrid_test: hybrid_test.c
+	@$(CC) $(OMP_FLAGS) $< -o hybrid_test
+
+heat_stencil_1D_mpi_omp: heat_stencil_1D_mpi_omp.c
+	@$(CC) $(OMP_FLAGS) $< -o heat_stencil_1D_mpi_omp
 
 heat_stencil_1D_seq: heat_stencil_1D_seq.c
 	@$(GCC) $(CC_FLAGS) $< -o heat_stencil_1D_seq
@@ -20,6 +27,7 @@ clean:
 	@rm heat_stencil_1D_seq
 	@rm heat_stencil_1D_mpi
 	@rm heat_stencil_checker
+	@rm heat_stencil_1D_mpi_omp
 
 .PHONEY: run
 run: all
