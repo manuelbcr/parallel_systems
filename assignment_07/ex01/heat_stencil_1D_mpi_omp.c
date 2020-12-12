@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     N = atoi(argv[1]);
   }
-  int T = N * 500;
+  int T = 500;
   printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
   // ---------- setup ----------
@@ -110,9 +110,12 @@ int main(int argc, char **argv) {
       }
     }
 
+    //printf("(RANK#%d): send and receive finished for timestep=%d\n", rank, t);
     // .. we propagate the temperature
     #pragma omp parallel for
     for (long long i = 0; i < last_index; i++) {
+
+      //printf("(RANK#%d): dealing with item %lld of timestep=%d by Thread=%d\n", rank, i, t, omp_get_thread_num());
       // center stays constant (the heat is still on)
       if (i+min_index_in_A == source_x) {
         B_sub[i] = A_sub[i];

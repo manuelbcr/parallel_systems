@@ -13,7 +13,7 @@ module load openmpi/3.1.1
 
 export OMP_NUM_THREADS=$NSLOTS
 
-mpiexec -n 8 ./heat_stencil_1D_mpi_omp 100 
+mpiexec -n 8 ./heat_stencil_1D_mpi_omp 1000000 
 
 
 
