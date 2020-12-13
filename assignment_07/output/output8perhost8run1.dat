@@ -1,0 +1,22 @@
+  Loading openmpi/3.1.1 for compiler gnu-4.8.5
+The process took 4.03437 seconds to finish. Prc: 1, Threads: 2 
+The process took 4.13407 seconds to finish. Prc: 2, Threads: 1 
+The process took 2.17189 seconds to finish. Prc: 2, Threads: 2 
+The process took 2.66778 seconds to finish. Prc: 1, Threads: 3 
+The process took 2.84478 seconds to finish. Prc: 3, Threads: 1 
+The process took 2.77329 seconds to finish. Prc: 3, Threads: 3 
+The process took 2.04853 seconds to finish. Prc: 1, Threads: 4 
+The process took 2.12381 seconds to finish. Prc: 4, Threads: 1 
+The process took 3.01686 seconds to finish. Prc: 4, Threads: 4 
+The process took 1.70203 seconds to finish. Prc: 1, Threads: 5 
+The process took 1.76901 seconds to finish. Prc: 5, Threads: 1 
+The process took 5.51749 seconds to finish. Prc: 5, Threads: 5 
+The process took 1.44107 seconds to finish. Prc: 1, Threads: 6 
+The process took 1.51465 seconds to finish. Prc: 6, Threads: 1 
+The process took 8.22204 seconds to finish. Prc: 6, Threads: 6 
+The process took 1.2743 seconds to finish. Prc: 1, Threads: 7 
+The process took 1.35088 seconds to finish. Prc: 7, Threads: 1 
+The process took 11.5542 seconds to finish. Prc: 7, Threads: 7 
+The process took 1.1329 seconds to finish. Prc: 1, Threads: 8 
+The process took 1.21382 seconds to finish. Prc: 8, Threads: 1 
+The process took 15.7449 seconds to finish. Prc: 8, Threads: 8 
