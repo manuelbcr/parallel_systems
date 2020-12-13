@@ -1,0 +1,71 @@
+  Loading openmpi/3.1.1 for compiler gnu-4.8.5
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 3.98771 seconds to finish. Prc: 1, Threads: 2 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 4.05308 seconds to finish. Prc: 2, Threads: 1 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 2.62895 seconds to finish. Prc: 1, Threads: 3 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 3.36195 seconds to finish. Prc: 3, Threads: 1 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 2.02895 seconds to finish. Prc: 1, Threads: 4 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 2.14935 seconds to finish. Prc: 4, Threads: 1 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.67336 seconds to finish. Prc: 1, Threads: 5 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.76209 seconds to finish. Prc: 5, Threads: 1 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.41689 seconds to finish. Prc: 1, Threads: 6 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.50274 seconds to finish. Prc: 6, Threads: 1 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.22395 seconds to finish. Prc: 1, Threads: 7 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.29498 seconds to finish. Prc: 7, Threads: 1 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.1137 seconds to finish. Prc: 1, Threads: 8 
+Verification: OK
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+The process took 1.18349 seconds to finish. Prc: 8, Threads: 1 
+Verification: OK
