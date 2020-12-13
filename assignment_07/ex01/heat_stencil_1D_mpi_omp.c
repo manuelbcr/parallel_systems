@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-
-typedef double value_t;
+#include <omp.h>
 
 #define RESOLUTION 120
+
+typedef double value_t;
 
 // -- vector utilities --
 
@@ -16,15 +17,25 @@ void releaseVector(Vector m);
 
 void printTemperature(Vector m, int N);
 
+void handleError(int error);
+
 // -- simulation code ---
 
 int main(int argc, char **argv) {
   double start = MPI_Wtime();
-  // 'parsing' optional input parameter = problem size
+  
   int N = 100;
   if (argc > 1) {
     N = atoi(argv[1]);
   }
+
+  int num_threads = 4;
+  if (argc > 1) {
+    num_threads = atoi(argv[2]);
+  }
+
+  omp_set_num_threads(num_threads);
+
   int T = 500;
   printf("Computing heat-distribution for room size N=%d for T=%d timesteps\n", N, T);
 
@@ -43,11 +54,19 @@ int main(int argc, char **argv) {
   A[source_x] = 273 + 60;
 
   // setup of parallel part
+  int ierr;
   int rank, rank_size;
   int root_proc = 0;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &rank_size);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int provided = 0;
+  ierr = MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
+  // error codes are returned to the user
+  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+  ierr = MPI_Comm_size(MPI_COMM_WORLD, &rank_size);
+  handleError(ierr);
+  ierr = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  handleError(ierr);
+  
+  
 
   // calculate window size and initialize subarray
   // we have to deal the case when N is not divideable by the rank_size
@@ -67,7 +86,7 @@ int main(int argc, char **argv) {
     A_sub[i] = A[i+rank*window_size];
   }
 
-  printf("(RANK#%d): I am responsible for subpart: [%d, %d]\n", rank, rank*window_size, rank*window_size+last_index-1);
+  printf("(RANK#%d): I am responsible for subpart: [%d, %d] Num_Threads %d\n", rank, rank*window_size, rank*window_size+last_index-1, num_threads);
 
   // intial print of heat environment
   if(rank == root_proc){
@@ -91,22 +110,30 @@ int main(int argc, char **argv) {
     // first all even ranks are sending than all odd ones
     if(rank%2 == 0){
       if(rank > 0){
-        MPI_Send(&A_sub[0], 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD);
-        MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        ierr = MPI_Send(&A_sub[0], 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD);
+        handleError(ierr);
+        ierr = MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        handleError(ierr);
       }
       if(rank < rank_size-1){
-        MPI_Send(&A_sub[last_index-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
-        MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        ierr = MPI_Send(&A_sub[last_index-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+        handleError(ierr);
+        ierr = MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        handleError(ierr);
       }
     }
     else{
       if(rank < rank_size-1){
-        MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Send(&A_sub[last_index-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+        ierr = MPI_Recv(&edge_cell_r, 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        handleError(ierr);
+        ierr = MPI_Send(&A_sub[last_index-1], 1, MPI_DOUBLE, rank+1, 0, MPI_COMM_WORLD);
+        handleError(ierr);
       }
       if(rank > 0){
-        MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Send(&A_sub[0], 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD);
+        ierr = MPI_Recv(&edge_cell_l, 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        handleError(ierr);
+        ierr = MPI_Send(&A_sub[0], 1, MPI_DOUBLE, rank-1, 0, MPI_COMM_WORLD);
+        handleError(ierr);
       }
     }
 
@@ -151,9 +178,10 @@ int main(int argc, char **argv) {
   }
   
   // gather all end-sub-results for final output
-  MPI_Gatherv(A_sub, window_size, MPI_DOUBLE, 
+  ierr = MPI_Gatherv(A_sub, window_size, MPI_DOUBLE, 
                A, receive_counts, displs, MPI_DOUBLE, 
                0, MPI_COMM_WORLD);
+  handleError(ierr);
 
   releaseVector(B_sub);
   releaseVector(A_sub);
@@ -241,4 +269,19 @@ void printTemperature(Vector m, int N) {
   }
   // right wall
   printf("X");
+}
+
+void handleError(int error){
+
+  if(error == MPI_SUCCESS){
+    return;
+  }
+
+  int len, eclass;
+  char estring[MPI_MAX_ERROR_STRING];
+  MPI_Error_class(error, &eclass);
+  MPI_Error_string(error, estring, &len);
+  printf("Error %d: %s\n", eclass, estring);
+  MPI_Abort(MPI_COMM_WORLD, error);
+
 }
