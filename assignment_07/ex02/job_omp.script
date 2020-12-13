@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#$ -q std.q
+#$ -cwd
+#$ -N my_test_job
+#$ -o output.dat
+#$ -j yes
+
+#$ -pe openmpi-4perhost 4
+
+module load openmpi/3.1.1
+
+mpiexec -n 4 ./heat_stencil_1D_mpi_omp 1000 4
+
+
+

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#$ -q std.q
+#$ -cwd
+#$ -N my_test_job
+#$ -o output_test.dat
+#$ -j yes
+
+#$ -pe openmpi-2perhost 8
+
+module load openmpi/3.1.1
+
+mpiexec -n 8 ./hybrid_test 
+
+
+

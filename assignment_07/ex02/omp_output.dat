@@ -1,0 +1,21 @@
+  Loading openmpi/3.1.1 for compiler gnu-4.8.5
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+Computing heat-distribution for room size N=1000000 for T=500 timesteps
+(RANK#7): I am responsible for subpart: [875000, 999999]
+(RANK#5): I am responsible for subpart: [625000, 749999]
+(RANK#6): I am responsible for subpart: [750000, 874999]
+(RANK#2): I am responsible for subpart: [250000, 374999]
+(RANK#1): I am responsible for subpart: [125000, 249999]
+(RANK#3): I am responsible for subpart: [375000, 499999]
+(RANK#4): I am responsible for subpart: [500000, 624999]
+(RANK#0): I am responsible for subpart: [0, 124999]
+Initial:	X                              @                                                                                         X
+The process took 15.5052 seconds to finish. 
+Final:		X                             %@                                                                                         X
+Verification: OK
