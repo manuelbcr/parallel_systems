@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef double value_t;
 typedef value_t **Matrix;
@@ -22,8 +23,7 @@ void releaseMatrix(Matrix m, int rows) {
   free(m); 
 }
 
-void printMatrix(Matrix m, int rows, int columns)
-{
+void printMatrix(Matrix m, int rows, int columns) {
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < columns; j++) {
       printf("%.2lf\t", m[i][j]);
@@ -35,11 +35,16 @@ void printMatrix(Matrix m, int rows, int columns)
 
 
 
-int main(int argc, char **argv)
-{
- 
-  int N = 5; // rows
-  int M = 10; // columns
+int main(int argc, char **argv){
+
+int N = 5; // rows
+int M = 10; // columns
+
+
+  if (argc > 1) {
+    N = M = atoi(argv[1]);
+  }
+
 
   //---------- create matrices ----------
   Matrix A = createMatrix(N, M);
@@ -53,10 +58,12 @@ int main(int argc, char **argv)
           A[i][j] = i * j;
       }
   }
+  /*
   printf("==============================");
   printf("MAT A");
   printf("==============================\n");
   printMatrix(A,N,M);
+  */
 
   //initialize matrix B (identity matrix)
   for(int i=0; i<M;i++){
@@ -64,12 +71,14 @@ int main(int argc, char **argv)
           B[i][j] = (i == j) ? 1 : 0;
       }
   }
+  /*
   printf("==============================");
   printf("MAT B");
   printf("==============================\n");
   printMatrix(B,M,M);
+   */
 
-
+  clock_t start = clock();
   // ---------- compute ----------
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < M; j++) {
@@ -78,11 +87,17 @@ int main(int argc, char **argv)
       }
     }
   }
+
+clock_t end = clock();
+printf("The process took %f seconds to finish. \n", ((double)(end - start)) / CLOCKS_PER_SEC);
+
+/*
 printf("==============================");
 printf("RES");
 printf("==============================\n");
 printMatrix(res,N,M);
-
+*/
+  
   // ---------- cleanup ----------
   releaseMatrix(A,N);
   releaseMatrix(B,M);
