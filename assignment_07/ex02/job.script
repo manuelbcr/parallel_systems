@@ -10,7 +10,7 @@
 
 module load openmpi/3.1.1
 
-mpiexec -n 8 ./heat_stencil_1D_mpi 1000000 
+mpiexec -n 8 ./heat_stencil_1D_mpi 100 
 
 
 
