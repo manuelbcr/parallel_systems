@@ -1,0 +1,191 @@
+measurments only for the computation no initialization or else
+========== pragma omp parallel shared(A,B,res) schedule(static)
+T=1
+N=50, Work took 0.000300 seconds
+N=100, Work took 0.002619 seconds
+N=500, Work took 0.634656 seconds
+N=1000, Work took 8.775289 seconds
+N=2000, Work took 81.866290 seconds
+N=3000, Work took 320.515887 seconds
+T=2
+N=50,  Work took 0.000244 seconds
+N=100,  Work took 0.001433 seconds
+N=500,  Work took 0.328632 seconds
+N=1000,  Work took 4.678038 seconds
+N=2000,  Work took 45.416408 seconds
+N=3000,  Work took 177.537801 second
+T=3
+N=50, Work took 0.000222 seconds
+N=100, Work took 0.001037 seconds
+N=500, Work took 0.242983 seconds
+N=1000, Work took 3.392968 seconds
+N=2000, Work took 33.565880 seconds
+N=3000, Work took 122.035240 seconds
+T=4
+N=50,  Work took 0.000254 seconds
+N=100,  Work took 0.000882 seconds
+N=500,  Work took 0.160307 seconds
+N=1000,  Work took 2.301768 seconds
+N=2000,  Work took 21.843025 seconds
+N=3000,  Work took 79.947449 seconds
+T=5
+N=50, Work took 0.000253 seconds
+N=100, Work took 0.000795 seconds
+N=500, Work took 0.130224 seconds
+N=1000, Work took 1.987795 seconds
+N=2000, Work took 18.800311 seconds
+N=3000, Work took 70.101793 seconds
+T=6
+N=50,  Work took 0.000274 seconds
+N=100,  Work took 0.000704 seconds
+N=500,  Work took 0.108064 seconds
+N=1000,  Work took 1.650530 seconds
+N=2000,  Work took 15.449209 seconds
+N=3000,  Work took 57.689051 seconds
+T=7
+N=50, Work took 0.003162 seconds
+N=100, Work took 0.002811 seconds
+N=500, Work took 0.094002 seconds
+N=1000, Work took 1.399155 seconds
+N=2000, Work took 13.276138 seconds
+N=3000, Work took 50.093049 seconds
+T=8
+N=50, Work took 0.003196 seconds
+N=100,  Work took 0.003749 seconds
+N=500, Work took 0.095021 seconds
+N=1000, Work took 1.260216 seconds
+N=2000, Work took 12.019482 seconds
+N=3000, Work took 43.833310 seconds
+
+========== pragma omp parallel shared(A,B,res)  with parallel for for the initialization
+
+T=1
+N=50 Work took 0.000282 seconds
+N=100 Work took 0.002612 seconds
+N=500 Work took 0.634891 seconds
+N=1000 Work took 8.815979 seconds
+N=2000 Work took 75.626120 seconds
+N=3000 Work took 270.279198 seconds
+
+T=2
+N=50 Work took 0.000171 seconds
+N=100 Work took 0.001353 seconds
+N=500 Work took 0.318813 seconds
+N=1000 Work took 4.704818 seconds
+N=2000 Work took 43.720958 seconds
+N=3000 Work took 146.956057 seconds
+
+T=3
+N=50 Work took 0.000120 seconds
+N=100 Work took 0.000927 seconds
+N=500 Work took 0.212417 seconds
+N=1000 Work took 3.097217 seconds
+N=2000 Work took 31.189182 seconds
+N=3000 Work took 119.157290 seconds
+
+T=4 
+N=50 Work took 0.000091 seconds
+N=100 Work took 0.000730 seconds
+N=500 Work took 0.192917 seconds
+N=1000 Work took 2.861672 seconds
+N=2000 Work took 24.525203 seconds
+N=3000Work took 88.574534 seconds
+
+T=5
+N=50 Work took 0.000090 seconds
+N=100 Work took 0.000602 seconds
+N=500 Work took 0.171087 seconds
+N=1000 Work took 2.360511 seconds
+N=2000 Work took 21.452782 seconds
+N=3000 Work took 80.887673 seconds
+
+T=6 
+N=50 Work took 0.000070 seconds
+N=100 Work took 0.000504 seconds
+N=500 Work took 0.107696 seconds
+N=1000 Work took 1.663354 seconds
+N=2000 Work took 15.447292 seconds
+N=3000 Work took 59.019989 seconds
+
+t=7
+N=50 Work took 0.000066 seconds
+N=100 Work took 0.000445 seconds
+N=500 Work took 0.093091 seconds
+N=1000 Work took 1.429696 seconds
+N=2000 Work took 13.353027 seconds
+N=3000 Work took 54.005407 seconds
+
+T=8
+N=50 Work took 0.000064 seconds
+N=100 Work took 0.003519 seconds
+N=500 Work took 0.087688 seconds
+N=1000 Work took 1.244668 seconds
+N=2000 Work took 11.624923 seconds
+N=3000 Work took 45.486705 seconds
+
+========== pragma omp parallel shared(A,B,res) schedule(dynamic)
+
+T=1
+N=50 Work took 0.000204 seconds
+N=100 Work took 0.001650 seconds
+N=500 Work took 0.636093 seconds
+N=1000 Work took 8.833148 seconds
+N=2000 Work took 78.439017 seconds
+N=3000 Work took 308.086168 seconds
+
+T=2
+N=50 Work took 0.000213 seconds
+N=100 Work took 0.000996 seconds
+N=500 Work took 0.318774 seconds
+N=1000 Work took 4.504543 seconds
+N=2000 Work took 45.696380 seconds
+N=3000 Work took 162.941954 seconds
+
+T=3
+N=50 Work took 0.000197 seconds
+N=100 Work took 0.000713 seconds
+N=500 Work took 0.237299 seconds
+N=1000 Work took 3.411705 seconds
+N=2000 Work took 31.880717 seconds
+N=3000 Work took 114.035705 seconds
+
+T=4
+N=50 Work took 0.000239 seconds
+N=100 Work took 0.000618 seconds
+N=500 Work took 0.160706 seconds
+N=1000 Work took 2.284163 seconds
+N=2000 Work took 21.467778 seconds
+N=3000 Work took 79.439907 seconds
+
+T=5
+N=50 Work took 0.000238 seconds
+N=100 Work took 0.000555 seconds
+N=500 Work took 0.130076 seconds
+N=1000 Work took 1.884124 seconds
+N=2000 Work took 17.475038 seconds
+N=3000 Work took 66.221558 seconds
+
+T=6
+N=50 Work took 0.000274 seconds
+N=100 Work took 0.000556 seconds
+N=500 Work took 0.109114 seconds
+N=1000 Work took 1.594450 seconds
+N=2000 Work took 14.845071 seconds
+N=3000 Work took 55.595587 seconds
+
+T=7
+N=50 Work took 0.003267 seconds
+N=100 Work took 0.000532 seconds
+N=500 Work took 0.095527 seconds
+N=1000 Work took 1.383674 seconds
+N=2000 Work took 13.048496 seconds
+N=3000 Work took 50.046192 seconds
+
+T=8
+N=50 Work took 0.003288 seconds
+N=100 Work took 0.002767 seconds
+N=500 Work took 0.087867 seconds
+N=1000 Work took 1.237378 seconds
+N=2000 Work took 12.325706 seconds
+N=3000 Work took 43.986983 seconds
+
