@@ -189,3 +189,68 @@ N=1000 Work took 1.237378 seconds
 N=2000 Work took 12.325706 seconds
 N=3000 Work took 43.986983 seconds
 
+========== pragma omp parallel shared(A,transposedB,res) schedule(static) optimized transposedB
+
+T=1
+N=50 Work took 0.000164 seconds
+N=100 Work took 0.001249 seconds
+N=500 Work took 0.155735 seconds
+N=1000 Work took 2.590927 seconds
+N=2000 Work took 23.041141 seconds
+N=3000 Work took 97.869682 seconds
+
+T=2
+N=50 Work took 0.000188 seconds
+N=100 Work took 0.000751 seconds
+N=500 Work took 0.078468 seconds
+N=1000 Work took 1.407677 seconds
+N=2000 Work took 12.423675 seconds
+N=3000 Work took 70.380097 seconds
+
+T=3
+N=50 Work took 0.000227 seconds
+N=100 Work took 0.000810 seconds
+N=500 Work took 0.075705 seconds
+N=1000 Work took 1.482064 seconds
+N=2000 Work took 17.144294 seconds
+N=3000 Work took 47.876737 seconds
+
+T=4 
+N=50 Work took 0.000219 seconds
+N=100 Work took 0.000633 seconds
+N=500 Work took 0.048974 seconds
+N=1000 Work took 1.262108 seconds
+N=2000 Work took 10.908819 seconds
+N=3000 Work took 36.505795 seconds
+
+T=5
+N=50 Work took 0.000225 seconds
+N=100 Work took 0.000486 seconds
+N=500 Work took 0.032469 seconds
+N=1000 Work took 0.744825 seconds
+N=2000 Work took 7.987593 seconds
+N=3000 Work took 27.958117 seconds
+
+T=6
+N=50 Work took 0.000258 seconds
+N=100 Work took 0.000486 seconds
+N=500 Work took 0.027440 seconds
+N=1000 Work took 0.613783 seconds
+N=2000 Work took 7.961911 seconds
+N=3000 Work took 26.569350 seconds
+
+T=7
+N=50 Work took 0.000276 seconds
+N=100 Work took 0.002984 seconds
+N=500 Work took 0.029977 seconds
+N=1000 Work took 0.582338 seconds
+N=2000 Work took 6.664691 seconds
+N=3000 Work took 25.746925 seconds
+
+T=8
+N=50 Work took 0.003121 seconds
+N=100 Work took 0.003355 seconds
+N=500 Work took 0.034355 seconds
+N=1000 Work took 0.512957 seconds
+N=2000  Work took 6.183089 seconds
+N=3000 Work took 19.321613 seconds
