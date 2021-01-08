@@ -46,4 +46,7 @@
 /assignment_07/ex01/heat_stencil_1D_mpi
 /assignment_07/ex01/heat_stencil_checker
 
+/assignment_08/ex01/matmul_seq
+/assignment_08/ex01/matmul_omp
+
 output.dat
