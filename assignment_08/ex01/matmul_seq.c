@@ -9,7 +9,7 @@ typedef value_t **Matrix;
 
 Matrix createMatrix(int rows, int columns) {
   // create data and index Matrix
-  value_t **mat = malloc(sizeof(value_t) * rows);
+  value_t **mat = malloc(sizeof(value_t*) * rows);
   for (int i = 0; i < columns; i++) {
     mat[i] = malloc(sizeof(value_t) *columns);
   }
