@@ -48,5 +48,6 @@
 
 /assignment_08/ex01/matmul_seq
 /assignment_08/ex01/matmul_omp
+/assignment_08/ex01/matmul_optomp
 
 output.dat
