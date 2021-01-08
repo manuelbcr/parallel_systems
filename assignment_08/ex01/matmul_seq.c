@@ -17,7 +17,7 @@ Matrix createMatrix(int rows, int columns) {
 }
 
 void releaseMatrix(Matrix m, int rows) { 
-  for(int i=0; i < rows; i++){
+  for(int i=1; i < rows; i++){
     free(m[i]); 
   }
   free(m); 
