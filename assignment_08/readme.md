@@ -14,10 +14,26 @@ The goal of this assignment is to implement and optimize two types of dwarfs usi
     - make matrix B the identity matrix (`b(i,j) = (i == j) ? 1 : 0`), 
     - use `double` as the element type, and 
     - only consider the actual matrix multiplication for your time measurements, not the initialization or any verification.
+
+We first implemented a naive version of matrix multiplication which can be found at `ex01/matmul_seq.c`. Then we created a simple parallel version using openmp. Since this version did not meet our expectations, we created a parallel optimized version of it by using the optimization strategies from the lecture. The result can be seen in `ex01/matmul_optomp.c.
+
 - Measure the execution time of your OpenMP program for several matrix sizes and for 1 and 8 threads.
+
+The execution times can be seen in `data/measurements_ex01.xls` file. We have measured the performance of our implementation for matrix sizes of 500x500, 1000x1000, 2000x2000 and 3000x3000 using between 1 and 8 threads.
+
 - Illustrate the data in appropriate speedup/efficiency figures and discuss them. What can you observe?
+
+The figures for speedup and efficiency can also be seen in `data/measurements_ex01.xls`. Remarkable here is that the optimized parallel version with 8 threads has a speedup of about 106 for 3000x3000 compared to the sequential version.
+
 - Try to maximize the performance by considering all sequential and parallelism-related optimizations we discussed so far. Which did you choose and why?
+
+For optimization we have chosen loop blocking/tiling with a block size of 55 for 3000x3000 matrices. To further optimize the execution time we also used a transposed matrix.
+
 - Add your best wall times for 1 and 8 threads for `N = 3000` into the comparison spreadsheet linked on Discord.
+
+Our best wall times were:
+1 thread: 34.05388s
+8 threads: 4.946338s
 
 ## Exercise 2
 
