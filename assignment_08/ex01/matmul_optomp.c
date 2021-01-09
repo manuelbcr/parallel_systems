@@ -43,6 +43,7 @@ int M = 10; // columns
 int block_size = 10;
 double start;
 double end;
+int num_threads=1;
 
  if (argc > 1) {
     N = M = atoi(argv[1]);
@@ -50,7 +51,11 @@ double end;
  if (argc > 2) {
     block_size = atoi(argv[2]);
  }
+ if (argc > 3) {
+    num_threads = atoi(argv[3]);
+ }
 
+  omp_set_num_threads(num_threads);
   //---------- create matrices ----------
   Matrix A = createMatrix(N, M);
   //identity matrix
@@ -93,12 +98,13 @@ double end;
   }
 
 
-start = omp_get_wtime();
+
 // ---------- compute ----------
 int i = 0, j = 0, k = 0, jj = 0, kk = 0;
 double tmp;
 int chunk = 1;
 
+start = omp_get_wtime();
 #pragma omp parallel shared(A, transposedB, res, N, chunk) private(i, j, k, jj, kk, tmp)
 {
   #pragma omp for schedule (static, chunk)
@@ -121,11 +127,8 @@ int chunk = 1;
     }
   }
 }
-
-
-
 end = omp_get_wtime(); 
-printf("Work took %f seconds\n", end - start);
+printf("Work took %f seconds. Number of threads: %d\n", end - start, num_threads);
 /*
 printf("==============================");
 printf("RES");
