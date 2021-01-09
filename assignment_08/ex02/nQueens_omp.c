@@ -67,6 +67,7 @@ bool place_queen(Chessboard chessboard, int column, int N, int * number_of_solut
   
   bool result = false;
 
+  
   if (column == N){
     //printSolution(chessboard, N);
     *number_of_solutions = *number_of_solutions +1;
@@ -74,6 +75,7 @@ bool place_queen(Chessboard chessboard, int column, int N, int * number_of_solut
   }
   
   // iterate over all elements in a column
+  #pragma omp for 
   for (int i = 0; i < N; i++) { 
 
     /* Check if the queen can be placed on 
