@@ -20,11 +20,13 @@ void printSolution(Chessboard chessboard, int N);
 
 bool is_safe(Chessboard chessboard, int row, int column, int N);
  
-bool place_queen(Chessboard chessboard, int column, int N, int * number_of_solutions);
+void place_queen(int queens[], int row, int col, int N);
   
-bool solve(int N);
+void solve(int N);
 
 // ---------------- Main ---------------------
+
+int nrOfSolutions=0;
 
 int main(int argc, char **argv){
 
@@ -37,63 +39,62 @@ int main(int argc, char **argv){
     printf("[USAGE]: ./nQueens <number of queens>\n");
     printf("[INFO]: ./nQueens 8 is executed now\n");
   }
-
+  
+  double start = omp_get_wtime();
   solve(N);
+  double end = omp_get_wtime(); 
 
+  printf("Number of solutions: %d\n", nrOfSolutions);
+  printf("Work took %f seconds\n", end - start);
 }
 
 // ---------------- Function Definitions ---------------------
 
-bool solve(int N){ 
-
-  Chessboard chessboard = init_chessboard(N);
-
-  int number_of_solutions = 0;
-  double start = omp_get_wtime();
-  if(place_queen(chessboard, 0, N, &number_of_solutions) == false){
-    printf("Solution does not exist"); 
-    return false; 
-  }else{
-    printf("%d\n", number_of_solutions);
+void solve(int N){ 
+  #pragma omp parallel
+  #pragma omp single
+  {
+    for(int i=0; i<N; i++) {
+      
+      int queens[N];
+      #pragma omp task
+      place_queen(queens, 0, i, N);
+    }
   }
-  printf("Work took %f seconds\n", omp_get_wtime() - start);
-
-  free_chessboard(chessboard, N);
-  
-  return true; 
+  return;
 }
 
-bool place_queen(Chessboard chessboard, int column, int N, int * number_of_solutions){
-  
-  bool result = false;
-
-  
-  if (column == N){
-    //printSolution(chessboard, N);
-    *number_of_solutions = *number_of_solutions +1;
-    result = true;
+void place_queen(int queens[], int row, int col, int N){
+  for(int i=0; i<row; i++) {
+    // vertical attacks
+    if (queens[i]==col) {
+      return;
+    }
+    // diagonal attacks
+    if (abs(queens[i]-col) == (row-i) ) {
+      return;
+    }
   }
-  
-  // iterate over all elements in a column
-  for (int i = 0; i < N; i++) { 
+  // column is ok, set the queen
+  queens[row]=col;
 
-    /* Check if the queen can be placed on 
-    board[i][col] */
-    if (is_safe(chessboard, i, column, N)) { 
-      
-      //if save place queen
-      chessboard[i][column] = 1; 
-  
-      // if save go to next column
-      if (place_queen(chessboard, column + 1, N, number_of_solutions)) {
-        result = true;
-      } 
-  
-      chessboard[i][column] = 0; // BACKTRACK 
-    } 
-  } 
-  
-    return result; 
+  if(row==N-1) {
+
+
+    // only one thread should print allowed to print at a time
+    #pragma omp critical
+    {
+      // increasing the solution counter is not atomic      
+      nrOfSolutions++;
+    }
+
+  }
+  else {
+    // try to fill next row
+    for(int i=0; i<N; i++) {
+      place_queen(queens, row+1, i, N);
+    }
+  }
 }
 
 
@@ -114,9 +115,7 @@ bool is_safe(Chessboard chessboard, int row, int column, int N) {
     for (i = row, j = column; j >= 0 && i < N; i++, j--) 
         if (chessboard[i][j]) 
             return false; 
-    
-    /* TODO: Why not checking column? */
-  
+      
     return true; 
 } 
 

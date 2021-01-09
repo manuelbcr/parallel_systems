@@ -7,7 +7,7 @@
 # Name the job
 #$ -N nqueens_openmp
 # Redirect output stream to this file. Useful for debugging, simple output, etc.
-#$ -o output.dat
+#$ -o result_1.txt
 # Redirect error stream to this file.
 #$ -e error.dat
 # Join the error stream to the output stream.
@@ -18,5 +18,9 @@
 #$ -l h_vmem=2G
 
 export OMP_NUM_THREADS=$NSLOTS
+./nQueens_omp 13
+./nQueens_omp 13
+./nQueens_omp 13
+./nQueens_omp 13
 ./nQueens_omp 13
 
