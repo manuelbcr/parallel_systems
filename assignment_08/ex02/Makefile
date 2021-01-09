@@ -9,7 +9,7 @@ nQueens_seq: nQueens_seq.c
 	@$(GCC) $(GCC_FLAGS) $< -o nQueens_seq
 
 nQueens_omp: nQueens_omp.c
-	@$(GCC) $(GCC_FLAGS) $< -o nQueens_omp
+	@$(GCC) $(OMP_FLAGS) $< -o nQueens_omp
 
 .PHONEY: clean
 clean:

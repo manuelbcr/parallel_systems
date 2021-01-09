@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
+#include <omp.h>
 
 // ---------------- Chessboard ---------------------
 
@@ -47,13 +49,14 @@ bool solve(int N){
   Chessboard chessboard = init_chessboard(N);
 
   int number_of_solutions = 0;
-  
+  double start = omp_get_wtime();
   if(place_queen(chessboard, 0, N, &number_of_solutions) == false){
     printf("Solution does not exist"); 
     return false; 
   }else{
     printf("%d\n", number_of_solutions);
   }
+  printf("Work took %f seconds\n", omp_get_wtime() - start);
 
   free_chessboard(chessboard, N);
   
@@ -65,7 +68,7 @@ bool place_queen(Chessboard chessboard, int column, int N, int * number_of_solut
   bool result = false;
 
   if (column == N){
-    printSolution(chessboard, N);
+    //printSolution(chessboard, N);
     *number_of_solutions = *number_of_solutions +1;
     result = true;
   }

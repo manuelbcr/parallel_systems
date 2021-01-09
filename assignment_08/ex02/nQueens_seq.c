@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 // ---------------- Chessboard ---------------------
 
@@ -48,12 +49,16 @@ bool solve(int N){
 
   int number_of_solutions = 0;
   
+  clock_t start = clock();
   if(place_queen(chessboard, 0, N, &number_of_solutions) == false){
     printf("Solution does not exist"); 
     return false; 
   }else{
     printf("%d\n", number_of_solutions);
   }
+  
+  clock_t end = clock();
+  printf("The process took %f seconds to finish. \n", ((double)(end - start)) / CLOCKS_PER_SEC);
 
   free_chessboard(chessboard, N);
   
