@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Select queue.
+#$ -q std.q
+# Use the current wd
+#$ -cwd
+# Name the job
+#$ -N matmul_openmp
+# Redirect output stream to this file. Useful for debugging, simple output, etc.
+#$ -o output.dat
+# Redirect error stream to this file.
+#$ -e error.dat
+# Join the error stream to the output stream.
+#$ -j yes
+# Load module because the software can be run on another system and not in the current
+# ssh session
+#$ -pe openmp 8 
+#$ -l h_vmem=2G
+
+export OMP_NUM_THREADS=$NSLOTS
+./matmul_optomp 3000 55 
+./matmul_optomp 3000 55 
+./matmul_optomp 3000 55 
+./matmul_optomp 3000 55 
+./matmul_optomp 3000 55 
+./matmul_optomp 3000 55 
+
