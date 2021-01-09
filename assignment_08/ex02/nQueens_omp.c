@@ -6,27 +6,18 @@
 #include <time.h>
 #include <omp.h>
 
-// ---------------- Chessboard ---------------------
-
-typedef int **Chessboard;
-
-Chessboard init_chessboard(int N);
-
-void free_chessboard(Chessboard m, int N);
 
 // ---------------- nQueens ---------------------
 
-void printSolution(Chessboard chessboard, int N);
+void printSolution(int queens_list[], int N);
 
-bool is_safe(Chessboard chessboard, int row, int column, int N);
- 
-void place_queen(int queens[], int row, int col, int N);
+void place_queen(int queens_list[], int row, int col, int N);
   
 void solve(int N);
 
 // ---------------- Main ---------------------
 
-int nrOfSolutions=0;
+int solutions_counter = 0;
 
 int main(int argc, char **argv){
 
@@ -44,7 +35,7 @@ int main(int argc, char **argv){
   solve(N);
   double end = omp_get_wtime(); 
 
-  printf("Number of solutions: %d\n", nrOfSolutions);
+  printf("Number of solutions: %d\n", solutions_counter);
   printf("Work took %f seconds\n", end - start);
 }
 
@@ -56,102 +47,72 @@ void solve(int N){
   {
     for(int i=0; i<N; i++) {
       
-      int queens[N];
+      int queens_list[N];
+
+      // start an openmp task
       #pragma omp task
-      place_queen(queens, 0, i, N);
+      place_queen(queens_list, 0, i, N);
     }
   }
-  return;
 }
 
-void place_queen(int queens[], int row, int col, int N){
+// function to place a queen if it is possible
+void place_queen(int queens_list[], int row, int col, int N){
+  // check for all rows/ queens if there is a conflict 
   for(int i=0; i<row; i++) {
-    // vertical attacks
-    if (queens[i]==col) {
+    // check whether it is only queen in column
+    if (queens_list[i]==col) {
       return;
     }
-    // diagonal attacks
-    if (abs(queens[i]-col) == (row-i) ) {
+    // check diagonals
+    if (abs(queens_list[i]-col) == (row-i) ) {
       return;
     }
   }
-  // column is ok, set the queen
-  queens[row]=col;
 
-  if(row==N-1) {
+  // if there was a conflict the function already returned so we can assume that the queen can be placed here
+  queens_list[row]=col;
 
+  // if last row is reached = no conflicts = valid solution
+  if(row == N-1) {
 
     // only one thread should print allowed to print at a time
     #pragma omp critical
     {
-      // increasing the solution counter is not atomic      
-      nrOfSolutions++;
+      // increment the number of solutions  
+      solutions_counter++;
+      // print solution
+      printSolution(queens_list, N);
     }
 
   }
   else {
-    // try to fill next row
+    // if not last row is reached the next row has to be checked
     for(int i=0; i<N; i++) {
-      place_queen(queens, row+1, i, N);
+      place_queen(queens_list, row+1, i, N);
     }
   }
 }
 
-
-bool is_safe(Chessboard chessboard, int row, int column, int N) { 
-    int i, j; 
-  
-    /* Check this row on left side */
-    for (i = 0; i < column; i++) 
-        if (chessboard[row][i]) 
-            return false; 
-  
-    /* Check upper diagonal on left side */
-    for (i = row, j = column; i >= 0 && j >= 0; i--, j--) 
-        if (chessboard[i][j]) 
-            return false; 
-  
-    /* Check lower diagonal on left side */
-    for (i = row, j = column; j >= 0 && i < N; i++, j--) 
-        if (chessboard[i][j]) 
-            return false; 
-      
-    return true; 
-} 
-
-void printSolution(Chessboard chessboard, int N){ 
+// function to print the solution
+void printSolution(int queens_list[], int N){ 
     for (int i = 0; i < N; i++) { 
-        for (int j = 0; j < N; j++) 
-            printf(" %d ", chessboard[i][j]); 
+        for (int j = 0; j < N; j++) {
+          if(queens_list[i] == j){
+            printf(" X "); 
+          }
+          else{
+            printf(" - ");
+          }
+        }
+
+            
         printf("\n"); 
     }
     printf("\n");
+    printf("#########################\n");
+    printf("\n");
 } 
-
-Chessboard init_chessboard(int N) {
-  
-  //malloc chessboard
-  Chessboard chessboard = (int **) malloc(N * sizeof(int *)); 
-  for (int i=0; i<N; i++) {
-    chessboard[i] = (int *) malloc(N * sizeof(int)); 
-  }
-
-  // init chessboard with no queens (0)
-  for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++) {
-      chessboard[i][j] = 0; 
-    }
-  }
-   
-  return chessboard;
-}
-
-void free_chessboard(Chessboard chessboard, int N) { 
-  for(int i=0; i < N; i++){
-    free(chessboard[i]); 
-  }
-  free(chessboard); 
-}
 
 
   
