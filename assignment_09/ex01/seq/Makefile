@@ -7,7 +7,7 @@ all: real
 SRC=$(wildcard *.c)
 
 real: $(SRC)
-	@$(CC) $(CC_FLAGS) $(SRC) -o real -lm
+	@$(CC) $(CC_FLAGS) $(SRC) -o real -lm -g -pg
 
 .PHONEY: clean
 clean:

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "globals.h"
 #include "randdp.h"
@@ -75,7 +76,7 @@ int main()
   }
 
   timer_start(T_init);
-
+  clock_t start = clock();
   //---------------------------------------------------------------------
   // Read in and broadcast input data
   //---------------------------------------------------------------------
@@ -249,7 +250,8 @@ int main()
   verify_value = 0.0;
 
   printf("\n Benchmark completed\n");
-
+  clock_t end = clock();
+  printf("The process took %f seconds to finish. \n", ((double)(end - start)) / CLOCKS_PER_SEC);
   epsilon = 1.0e-8;
   if (Class != 'U') {
     if (Class == 'S') {

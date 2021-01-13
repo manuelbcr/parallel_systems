@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
 
 #include "globals.h"
 #include "randdp.h"
@@ -75,7 +76,7 @@ int main()
   }
 
   timer_start(T_init);
-
+  double start = omp_get_wtime();
   //---------------------------------------------------------------------
   // Read in and broadcast input data
   //---------------------------------------------------------------------
@@ -249,7 +250,9 @@ int main()
   verify_value = 0.0;
 
   printf("\n Benchmark completed\n");
-
+  double end = omp_get_wtime(); 
+  printf("Work took %f seconds\n", end - start);
+  
   epsilon = 1.0e-8;
   if (Class != 'U') {
     if (Class == 'S') {
@@ -517,6 +520,8 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
   double u1[M], u2[M];
 
   if (timeron) timer_start(T_resid);
+    
+  // cannot parallelize outter loops because of dependencies on u1 and u2
   for (i3 = 1; i3 < n3-1; i3++) {
     for (i2 = 1; i2 < n2-1; i2++) {
       for (i1 = 0; i1 < n1; i1++) {
@@ -524,7 +529,7 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
                + u[i3-1][i2][i1] + u[i3+1][i2][i1];
         u2[i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1]
                + u[i3+1][i2-1][i1] + u[i3+1][i2+1][i1];
-      }
+      }      
       for (i1 = 1; i1 < n1-1; i1++) {
         r[i3][i2][i1] = v[i3][i2][i1]
                       - a[0] * u[i3][i2][i1]
@@ -554,6 +559,7 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
     showall(r, n1, n2, n3);
   }
 }
+
 
 
 //---------------------------------------------------------------------
