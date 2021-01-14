@@ -422,13 +422,11 @@ static void mg3P(double u[], double v[], double r[],
     //---------------------------------------------------------------------
     // compute residual for level k
     //---------------------------------------------------------------------
-    #pragma omp task
     resid(&u[ir[k]], &r[ir[k]], &r[ir[k]], m1[k], m2[k], m3[k], a, k);
 
     //---------------------------------------------------------------------
     // apply smoother
     //---------------------------------------------------------------------
-    #pragma omp task
     psinv(&r[ir[k]], &u[ir[k]], m1[k], m2[k], m3[k], c, k);
   }
 
@@ -528,14 +526,13 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
   // cannot parallelize outter loops because of dependencies on u1 and u2
   for (i3 = 1; i3 < n3-1; i3++) {
     for (i2 = 1; i2 < n2-1; i2++) {
-      #pragma omp for
+      #pragma omp parallel for schedule(static)
       for (i1 = 0; i1 < n1; i1++) {
         u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1]
                + u[i3-1][i2][i1] + u[i3+1][i2][i1];
         u2[i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1]
                + u[i3+1][i2-1][i1] + u[i3+1][i2+1][i1];
       }      
-      #pragma omp for
       for (i1 = 1; i1 < n1-1; i1++) {
         r[i3][i2][i1] = v[i3][i2][i1]
                       - a[0] * u[i3][i2][i1]
