@@ -519,41 +519,17 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
   double (*r)[n2][n1] = (double (*)[n2][n1])or;
 
   int i3, i2, i1;
-  
-  double*** u1 = (double ***) malloc(n3 * sizeof(double **)); 
-  for (int i=0; i<n3; i++) {
-    u1[i] = (double **) malloc(n2 * sizeof(double**)); 
-    for(int j=0; j<n2; j++){
-      u1[i][j] = (double *) malloc(M * sizeof(double)); 
-    }    
-  }
-  
-  double*** u2 = (double ***) malloc(n3 * sizeof(double **)); 
-  for (int i=0; i<n3; i++) {
-    u2[i] = (double **) malloc(n2 * sizeof(double**)); 
-    for(int j=0; j<n2; j++){
-      u2[i][j] = (double *) malloc(M * sizeof(double)); 
-    }    
-  }
-  
+  double u1[M], u2[M];
 
   if (timeron) timer_start(T_resid);
-    
-  // cannot parallelize outter loops because of dependencies on u1 and u2
-  
   for (i3 = 1; i3 < n3-1; i3++) {
     for (i2 = 1; i2 < n2-1; i2++) {
       for (i1 = 0; i1 < n1; i1++) {
-        u1[i3][i2][i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1]
+        u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1]
                + u[i3-1][i2][i1] + u[i3+1][i2][i1];
-        u2[i3][i2][i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1]
+        u2[i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1]
                + u[i3+1][i2-1][i1] + u[i3+1][i2+1][i1];
-      }    
-    }
-  }
-
-  for (i3 = 1; i3 < n3-1; i3++) {
-    for (i2 = 1; i2 < n2-1; i2++) {
+      }
       for (i1 = 1; i1 < n1-1; i1++) {
         r[i3][i2][i1] = v[i3][i2][i1]
                       - a[0] * u[i3][i2][i1]
@@ -563,35 +539,12 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
         //            - a[1] * ( u[i3][i2][i1-1] + u[i3][i2][i1+1]
         //                     + u1[i1] )
         //-------------------------------------------------------------------
-                      - a[2] * ( u2[i3][i2][i1] + u1[i3][i2][i1-1] + u1[i3][i2][i1+1] )
-                      - a[3] * ( u2[i3][i2][i1-1] + u2[i3][i2][i1+1] );
+                      - a[2] * ( u2[i1] + u1[i1-1] + u1[i1+1] )
+                      - a[3] * ( u2[i1-1] + u2[i1+1] );
       }
     }
   }
-
-  
   if (timeron) timer_stop(T_resid);
-
-  for (int i=1; i<n3; i++) {
-    
-    for(int j=0; j<n2; j++){
-      free(u1[i][j]);
-    }    
-
-    free(u1[i]);
-  }
-  
-  for (int i=1; i<n3; i++) {
-    
-    for(int j=0; j<n2; j++){
-      free(u2[i][j]);
-    }    
-
-    free(u2[i]);
-  }
-
-  free(u1);
-  free(u2);
 
   //---------------------------------------------------------------------
   // exchange boundary data
