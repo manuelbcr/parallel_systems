@@ -7,6 +7,7 @@
 void wtime(double *t)
 {
    /* a generic timer */
+   *t = 0;
    static int sec = -1;
    struct timeval tv;
    gettimeofday(&tv, (void *)0);

@@ -524,13 +524,14 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
 
   if (timeron) timer_start(T_resid);
   for (i3 = 1; i3 < n3-1; i3++) {
-    for (i2 = 1; i2 < n2-1; i2++) {
+    for (i2 = 1; i2 < n2-1; i2++) {      
       for (i1 = 0; i1 < n1; i1++) {
         u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1]
                + u[i3-1][i2][i1] + u[i3+1][i2][i1];
         u2[i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1]
                + u[i3+1][i2-1][i1] + u[i3+1][i2+1][i1];
       }
+
       for (i1 = 1; i1 < n1-1; i1++) {
         r[i3][i2][i1] = v[i3][i2][i1]
                       - a[0] * u[i3][i2][i1]
@@ -1212,7 +1213,6 @@ static void zero3(void *oz, int n1, int n2, int n3)
 
   int i1, i2, i3;
 
-  #pragma omp parallel for
   for (i3 = 0; i3 < n3; i3++) {
     for (i2 = 0; i2 < n2; i2++) {
       for (i1 = 0; i1 < n1; i1++) {
