@@ -397,6 +397,7 @@ static void mg3P(double u[], double v[], double r[],
   // down cycle.
   // restrict the residual from the find grid to the coarse
   //---------------------------------------------------------------------
+  
   for (k = lt; k >= lb+1; k--) {
     j = k - 1;
     rprj3(&r[ir[k]], m1[k], m2[k], m3[k],
@@ -902,7 +903,7 @@ static void comm3(void *ou, int n1, int n2, int n3, int kk)
 static void zran3(void *oz, int n1, int n2, int n3, int nx1, int ny1, int k)
 {
   double (*z)[n2][n1] = (double (*)[n2][n1])oz;
-
+  
   int i0, mm0, mm1;
 
   int i1, i2, i3, d1, e1, e2, e3;
@@ -1025,7 +1026,7 @@ static void zran3(void *oz, int n1, int n2, int n3, int nx1, int ny1, int k)
       i0 = i0-1;
     }
   }
-
+  
   //  mm1 = i1+1;
   //  mm0 = i0+1;
   mm1 = 0;
@@ -1211,6 +1212,7 @@ static void zero3(void *oz, int n1, int n2, int n3)
 
   int i1, i2, i3;
 
+  #pragma omp parallel for
   for (i3 = 0; i3 < n3; i3++) {
     for (i2 = 0; i2 < n2; i2++) {
       for (i1 = 0; i1 < n1; i1++) {
