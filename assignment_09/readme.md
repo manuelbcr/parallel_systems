@@ -29,73 +29,73 @@ Some notes to the program:
 * mg3P(double u[], double v[], double r[], double a[4], double c[4], int n1, int n2, int n3): multigrid V-cycle solver: 
 
 
-With enabling the timer.flag and together with perf stat we get the following data:
+  With enabling the timer.flag and together with perf stat we get the following data:
+  ```console
+  SECTION   Time (secs)
+  benchmk :    3.441  (100.00%)
+  mg3P    :    2.585  ( 75.13%)
+  psinv   :    0.853  ( 24.78%)
+  resid   :    1.669  ( 48.50%)
+  --> mg-resid:    0.864  ( 25.12%)
+  rprj3   :    0.401  ( 11.66%)
+  interp  :    0.352  ( 10.23%)
+  norm2   :    0.051  (  1.49%)
+  comm3   :    0.080  (  2.31%)
+  ```
+            4.404,56 msec task-clock                #    1,000 CPUs utilized          
+                  14      context-switches          #    0,003 K/sec                  
+                  0      cpu-migrations            #    0,000 K/sec                  
+            110.583      page-faults               #    0,025 M/sec                  
+      14.273.630.340      cycles                    #    3,241 GHz                    
+      32.685.242.882      instructions              #    2,29  insn per cycle         
+      1.717.809.025      branches                  #  390,007 M/sec                  
+          14.190.424      branch-misses             #    0,83% of all branches 
 
-SECTION   Time (secs)
-benchmk :    3.441  (100.00%)
-mg3P    :    2.585  ( 75.13%)
-psinv   :    0.853  ( 24.78%)
-resid   :    1.669  ( 48.50%)
---> mg-resid:    0.864  ( 25.12%)
-rprj3   :    0.401  ( 11.66%)
-interp  :    0.352  ( 10.23%)
-norm2   :    0.051  (  1.49%)
-comm3   :    0.080  (  2.31%)
+  5,007853840 seconds time elapsed
 
-          4.404,56 msec task-clock                #    1,000 CPUs utilized          
-                14      context-switches          #    0,003 K/sec                  
-                 0      cpu-migrations            #    0,000 K/sec                  
-           110.583      page-faults               #    0,025 M/sec                  
-    14.273.630.340      cycles                    #    3,241 GHz                    
-    32.685.242.882      instructions              #    2,29  insn per cycle         
-     1.717.809.025      branches                  #  390,007 M/sec                  
-        14.190.424      branch-misses             #    0,83% of all branches 
+  4,867632000 seconds user
+  0,139989000 seconds sys
 
-5,007853840 seconds time elapsed
+  So we can conclude that the section `benchmk` is the most computationally heavy one, which is clear because it comprises the whole benchmarking, followed by `mg3P` and `resid`. So for those three sections the biggest potential is given to improve the overall performance.
+  Far the majority of the execution time is spend in user mode, so we can conclude that there are less idle states and time spend to wait for I/O operations.
 
-4,867632000 seconds user
-0,139989000 seconds sys
+  A more detailed view is got with gprof:
+  ```console
+  Each sample counts as 0.01 seconds.
+    %   cumulative   self              self     total           
+  time   seconds   seconds    calls  ms/call  ms/call  name    
+  39.77      1.67     1.67      147    11.36    13.89  resid
+  22.15      2.60     0.93   131072     0.01     0.01  vranlc
+  17.86      3.35     0.75      168     4.47     6.65  psinv
+    8.10      3.69     0.34      147     2.31     4.50  rprj3
+    7.15      3.99     0.30      147     2.04     2.04  interp
+    3.10      4.12     0.13      485     0.27     2.19  showall
+    1.91      4.20     0.08                             norm2u3
+    0.00      4.20     0.00   131642     0.00     0.00  randlc
+    0.00      4.20     0.00     2332     0.00     0.00  wtime_
+    0.00      4.20     0.00     1123     0.00     0.00  timer_start
+    0.00      4.20     0.00     1119     0.00     0.00  timer_stop
+  ```
 
-So we can conclude that the section `benchmk` is the most computationally heavy one, which is clear because it comprises the whole benchmarking, followed by `mg3P` and `resid`. So for those three sections the biggest potential is given to improve the overall performance.
-Far the majority of the execution time is spend in user mode, so we can conclude that there are less idle states and time spend to wait for I/O operations.
-
-A more detailed view is got with gprof:
-```console
-Each sample counts as 0.01 seconds.
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  ms/call  ms/call  name    
- 39.77      1.67     1.67      147    11.36    13.89  resid
- 22.15      2.60     0.93   131072     0.01     0.01  vranlc
- 17.86      3.35     0.75      168     4.47     6.65  psinv
-  8.10      3.69     0.34      147     2.31     4.50  rprj3
-  7.15      3.99     0.30      147     2.04     2.04  interp
-  3.10      4.12     0.13      485     0.27     2.19  showall
-  1.91      4.20     0.08                             norm2u3
-  0.00      4.20     0.00   131642     0.00     0.00  randlc
-  0.00      4.20     0.00     2332     0.00     0.00  wtime_
-  0.00      4.20     0.00     1123     0.00     0.00  timer_start
-  0.00      4.20     0.00     1119     0.00     0.00  timer_stop
-```
-
-From this table we can derive which functions were called the most times and which ones took the most time.
-For instance `vranlc` required overall more than 22% of the execution time but was at the same time with 131072 calls
-very frequently triggered. On the other side `resid` for example took nearly 40% but was only 147 times executed. 
-This means that `resid` is much more computational expensive and potentially easier to optimize than `vranlc`. 
-From this table the most interesting functions are: `resid`, `psinv`, `rprj3` and `interp` because they have the highest 
-execution times per call and contribute the most to the overall execution time.    
+  From this table we can derive which functions were called the most times and which ones took the most time.
+  For instance `vranlc` required overall more than 22% of the execution time but was at the same time with 131072 calls
+  very frequently triggered. On the other side `resid` for example took nearly 40% but was only 147 times executed. 
+  This means that `resid` is much more computational expensive and potentially easier to optimize than `vranlc`. 
+  From this table the most interesting functions are: `resid`, `psinv`, `rprj3` and `interp` because they have the highest 
+  execution times per call and contribute the most to the overall execution time.    
 
 
-For checking the memory consumption we have used `valgrind`:
-```console
-==23078== HEAP SUMMARY:
-==23078==     in use at exit: 0 bytes in 0 blocks
-==23078==   total heap usage: 3 allocs, 3 frees, 1,968 bytes allocated
-````
+  For checking the memory consumption we have used `valgrind`:
+  ```console
+  ==23078== HEAP SUMMARY:
+  ==23078==     in use at exit: 0 bytes in 0 blocks
+  ==23078==   total heap usage: 3 allocs, 3 frees, 1,968 bytes allocated
+  ````
 
-With only 3 allocations with a total amount of 1,968 bytes this programm does not allocate a lot of memory of the heap.
+  With only 3 allocations with a total amount of 1,968 bytes this programm does not allocate a lot of memory of the heap.
 
-There are, however, 3 arrays of double with in the default case a size of of 19.704.488 values - which means 19704488*8 = 157.635.904 bytes.
-There are 3 of such arrays and this makes the program memory heavy.
+  There are, however, 3 arrays of double with in the default case a size of of 19.704.488 values - which means 19704488*8 = 157.635.904 bytes.
+  There are 3 of such arrays and this makes the program memory heavy.
 
 
 - Investigate any loops that carry larger workloads and determine if and how they can be parallelized. Parallelize them with OpenMP. Ensure that any code modification does not violate program correctness with respect to its output.
