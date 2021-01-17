@@ -1,0 +1,305 @@
+  Loading gcc/8.2.0
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :   15.668  (100.00%)
+  mg3P    :   11.808  ( 73.95%)
+  psinv   :    4.222  ( 26.44%)
+  resid   :    8.277  ( 51.84%)
+    --> mg-resid:    4.221  ( 26.43%)
+  rprj3   :    1.450  (  9.08%)
+  interp  :    1.385  (  8.67%)
+  norm2   :    0.103  (  0.65%)
+  comm3   :    0.311  (  1.95%)
+Work took 18.839661 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    9.282  (100.00%)
+  mg3P    :    7.149  ( 76.19%)
+  psinv   :    2.179  ( 23.23%)
+  resid   :    4.276  ( 45.58%)
+    --> mg-resid:    2.147  ( 22.88%)
+  rprj3   :    0.872  (  9.29%)
+  interp  :    1.386  ( 14.77%)
+  norm2   :    0.104  (  1.10%)
+  comm3   :    0.348  (  3.71%)
+Work took 11.824754 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    8.254  (100.00%)
+  mg3P    :    6.259  ( 74.93%)
+  psinv   :    1.557  ( 18.63%)
+  resid   :    3.941  ( 47.18%)
+    --> mg-resid:    1.950  ( 23.34%)
+  rprj3   :    0.779  (  9.33%)
+  interp  :    1.388  ( 16.62%)
+  norm2   :    0.103  (  1.23%)
+  comm3   :    0.369  (  4.42%)
+Work took 10.732177 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    7.333  (100.00%)
+  mg3P    :    5.586  ( 75.14%)
+  psinv   :    1.284  ( 17.27%)
+  resid   :    3.406  ( 45.82%)
+    --> mg-resid:    1.661  ( 22.35%)
+  rprj3   :    0.649  (  8.73%)
+  interp  :    1.385  ( 18.64%)
+  norm2   :    0.103  (  1.39%)
+  comm3   :    0.390  (  5.24%)
+Work took 9.750949 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    8.418  (100.00%)
+  mg3P    :    6.291  ( 73.85%)
+  psinv   :    1.529  ( 17.95%)
+  resid   :    4.136  ( 48.55%)
+    --> mg-resid:    2.012  ( 23.62%)
+  rprj3   :    0.755  (  8.86%)
+  interp  :    1.387  ( 16.28%)
+  norm2   :    0.103  (  1.21%)
+  comm3   :    0.391  (  4.59%)
+Work took 10.922055 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    8.499  (100.00%)
+  mg3P    :    6.331  ( 73.62%)
+  psinv   :    1.512  ( 17.59%)
+  resid   :    4.214  ( 49.00%)
+    --> mg-resid:    2.049  ( 23.82%)
+  rprj3   :    0.779  (  9.05%)
+  interp  :    1.385  ( 16.11%)
+  norm2   :    0.103  (  1.20%)
+  comm3   :    0.389  (  4.52%)
+Work took 10.965950 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    8.668  (100.00%)
+  mg3P    :    6.445  ( 73.50%)
+  psinv   :    1.527  ( 17.42%)
+  resid   :    4.316  ( 49.23%)
+    --> mg-resid:    2.096  ( 23.90%)
+  rprj3   :    0.827  (  9.43%)
+  interp  :    1.386  ( 15.80%)
+  norm2   :    0.103  (  1.18%)
+  comm3   :    0.391  (  4.46%)
+Work took 11.194189 seconds
+
+
+ Benchmark
+
+ No input file. Using compiled defaults 
+ Size:  256x 256x 256  (class B)
+ Iterations:                     20
+
+  iter   1
+  iter   5
+  iter  10
+  iter  15
+  iter  20
+
+ Benchmark completed
+ VERIFICATION SUCCESSFUL
+ L2 Norm is  1.8005644013551E-06
+ Error is    6.6330115975290E-14
+
+
+ Benchmark Completed.
+ Class           =                        B
+ Size            =            256x 256x 256
+ Iterations      =                       20
+ Operation type  =           floating point
+ Verification    =               SUCCESSFUL
+ Version         =                    3.3.1
+  SECTION   Time (secs)
+  benchmk :    8.489  (100.00%)
+  mg3P    :    6.348  ( 73.91%)
+  psinv   :    1.478  ( 17.20%)
+  resid   :    4.160  ( 48.43%)
+    --> mg-resid:    2.022  ( 23.54%)
+  rprj3   :    0.856  (  9.96%)
+  interp  :    1.385  ( 16.12%)
+  norm2   :    0.103  (  1.20%)
+  comm3   :    0.390  (  4.54%)
+Work took 10.993103 seconds

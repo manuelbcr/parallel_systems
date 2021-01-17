@@ -610,7 +610,8 @@ static void rprj3(void *or, int m1k, int m2k, int m3k,
   } else {
     d3 = 1;
   }
-
+  
+  #pragma omp parallel for private(x1, y1, x2, y2)
   for (j3 = 1; j3 < m3j-1; j3++) {
     i3 = 2*j3-d3;
     for (j2 = 1; j2 < m2j-1; j2++) {

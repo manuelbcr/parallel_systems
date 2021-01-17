@@ -56,7 +56,7 @@ comm3   :    0.080  (  2.31%)
 4,867632000 seconds user
 0,139989000 seconds sys
 
-So we can conclude that the section `benchmk` is the most computationally heavy one, which is clear because it comprises the whol benchmarking, followed by `mg3P` and `resid`. So for those three sections the biggest potential is given to improve the overall performance.
+So we can conclude that the section `benchmk` is the most computationally heavy one, which is clear because it comprises the whole benchmarking, followed by `mg3P` and `resid`. So for those three sections the biggest potential is given to improve the overall performance.
 Far the majority of the execution time is spend in user mode, so we can conclude that there are less idle states and time spend to wait for I/O operations.
 
 A more detailed view is got with gprof:
