@@ -99,6 +99,7 @@ There are 3 of such arrays and this makes the program memory heavy.
 
 
 - Investigate any loops that carry larger workloads and determine if and how they can be parallelized. Parallelize them with OpenMP. Ensure that any code modification does not violate program correctness with respect to its output.
+
   As mentioned above the functions `resid`, `psinv`, `rprj3` are most valuable to investigate on. Therefore we tried to parallelize parts of those functions.
 
 
