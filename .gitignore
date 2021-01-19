@@ -57,5 +57,6 @@
 /assignment_09/ex01/omp/real
 
 /assignment_10/ex01/pi_chapel
+/assignment_10/ex01/matmul_chapel
 
 output.dat
