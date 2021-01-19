@@ -2,5 +2,5 @@
 
 echo "Compiling matmul_chapel.chpl..."
 chpl matmul_chapel.chpl
-echo "finished comiling matmul_chapel"
+echo "finished compiling matmul_chapel"
 

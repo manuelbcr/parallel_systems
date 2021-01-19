@@ -2,5 +2,5 @@
 
 echo "Compiling pi_chapel.chpl..."
 chpl pi_chapel.chpl
-echo "finished comiling pi_chapel"
+echo "finished compiling pi_chapel"
 
