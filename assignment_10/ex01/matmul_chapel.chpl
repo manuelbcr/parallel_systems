@@ -37,8 +37,8 @@ forall i in 0..N-1 {
 
 stopwatch.stop();
 
-writeln("Resulting matrix:");
-writeln(M_result);
+//writeln("Resulting matrix:");
+//writeln(M_result);
 
 // verification
 var success_matmul: bool = true;
