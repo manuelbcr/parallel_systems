@@ -16,19 +16,22 @@ stopwatch.start();
 
 var thread_count : int = here.maxTaskPar;
 var inlier_counts: [1..thread_count] int;
+// start task parallelism with coforall -> for each thread one portion of N
 coforall i in 1..(thread_count){
     var inlier_counter_task : int = 0;
+    // thread unsafe randomstream is much faster therefore parSafe=false
     var random_num_generator = createRandomStream(real, seed+i, false);
     for i in ((i-1)*N/thread_count+1)..(i*N/thread_count){
         if((random_num_generator.getNext()**2 + random_num_generator.getNext()**2) <= 1.0){
             inlier_counter_task += 1;
         }   
     }
+    // when counter is written into array no locking is necessary
     inlier_counts[i] = inlier_counter_task;
     
 }
 
-
+// reduce results
 var inliers : int = 0;
 for i in 1..thread_count do
   inliers += inlier_counts[i];

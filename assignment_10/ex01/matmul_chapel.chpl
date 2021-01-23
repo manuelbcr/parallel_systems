@@ -21,6 +21,8 @@ forall i in 0..N-1 {
     }
 }
 
+var M_rhs_T = transpose(M_rhs);
+
 var M_result: [0..N-1, 0..N-1] real;
 stopwatch.start();
 
@@ -29,7 +31,7 @@ forall i in 0..N-1 {
     forall j in 0..N-1 {
         forall k in 0..N-1{
             // TODO: maybe transpose M_rhs to get more cache friendly programm
-            M_result[i, j] += M_lhs[i,k]*M_rhs[k,j];
+            M_result[i, j] += M_lhs[i,k]*M_rhs_T[j,k];
         }
     }
 }
