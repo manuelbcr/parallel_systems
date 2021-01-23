@@ -10,20 +10,30 @@ const seed = (getCurrentTime()+here.id) : int;
 writeln("Computing PI with Montecarlo method!");
 writeln("Number of iterations: ",N);
 
-var random_num_generator = new RandomStream(real, seed);
+
 
 stopwatch.start();
-var inlier_counter : int = 0;
 
-forall i in 1..N with (+ reduce inlier_counter){
-    var random_pair = random_num_generator.iterate({0..1}, resultType=real); 
-    if((random_pair[0]**2 + random_pair[1]**2) <= 1.0){
-        inlier_counter += 1;
-    }    
+var thread_count : int = here.maxTaskPar;
+var inlier_counts: [1..thread_count] int;
+coforall i in 1..(thread_count){
+    var inlier_counter_task : int = 0;
+    var random_num_generator = createRandomStream(real, seed+i, false);
+    for i in ((i-1)*N/thread_count+1)..(i*N/thread_count){
+        if((random_num_generator.getNext()**2 + random_num_generator.getNext()**2) <= 1.0){
+            inlier_counter_task += 1;
+        }   
+    }
+    inlier_counts[i] = inlier_counter_task;
+    
 }
 
 
-var approximated_pi = (inlier_counter*4.0)/N;
+var inliers : int = 0;
+for i in 1..thread_count do
+  inliers += inlier_counts[i];
+
+var approximated_pi = (inliers*4.0)/N;
 stopwatch.stop();
 writeln("PI = ",approximated_pi," (",N," iterations computed)");
 writeln("The computation took ",stopwatch.elapsed(),"s");
