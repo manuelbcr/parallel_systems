@@ -1,0 +1,40 @@
+elect queue.
+#$ -q std.q
+# Use the current wd
+#$ -cwd
+# Name the job
+#$ -N marmul_chapel
+# Redirect output stream to this file. Useful for debugging, simple output, etc.
+#$ -o output_matmul.dat
+# Redirect error stream to this file.
+#$ -e error.dat
+# Join the error stream to the output stream.
+#$ -j yes
+# Load module because the software can be run on another system and not in the current
+# # ssh session
+# Load module because the software can be run on another system and not in the current
+#$ -pe openmpi-8perhost 8
+export CHPL_RT_NUM_THREADS_PER_LOCALE=1
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+export CHPL_RT_NUM_THREADS_PER_LOCALE=2
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+export CHPL_RT_NUM_THREADS_PER_LOCALE=4
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+export CHPL_RT_NUM_THREADS_PER_LOCALE=8
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
+./matmul_chapel --N=2552 -nl 1 
