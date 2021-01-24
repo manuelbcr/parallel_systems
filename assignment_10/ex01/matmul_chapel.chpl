@@ -29,8 +29,7 @@ stopwatch.start();
 // do the matrix multiplication
 forall i in 0..N-1 {
     forall j in 0..N-1 {
-        forall k in 0..N-1{
-            // TODO: maybe transpose M_rhs to get more cache friendly programm
+        for k in 0..N-1{
             M_result[i, j] += M_lhs[i,k]*M_rhs_T[j,k];
         }
     }
