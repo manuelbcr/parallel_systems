@@ -1,0 +1,85 @@
+/usr/sge/lcc2/spool/n010/job_scripts/105234: line 1: elect: command not found
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14157 (1000000000 iterations computed)
+The computation took 48.0844s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14159 (1000000000 iterations computed)
+The computation took 45.8044s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14166 (1000000000 iterations computed)
+The computation took 45.8036s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14165 (1000000000 iterations computed)
+The computation took 45.8177s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14154 (1000000000 iterations computed)
+The computation took 45.802s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14156 (1000000000 iterations computed)
+The computation took 45.8046s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.1416 (1000000000 iterations computed)
+The computation took 22.9267s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14155 (1000000000 iterations computed)
+The computation took 24.0658s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14161 (1000000000 iterations computed)
+The computation took 23.9639s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14154 (1000000000 iterations computed)
+The computation took 22.9296s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14158 (1000000000 iterations computed)
+The computation took 22.9285s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14155 (1000000000 iterations computed)
+The computation took 11.4728s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14164 (1000000000 iterations computed)
+The computation took 11.4723s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14154 (1000000000 iterations computed)
+The computation took 11.4746s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14159 (1000000000 iterations computed)
+The computation took 11.4699s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14147 (1000000000 iterations computed)
+The computation took 11.4716s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14158 (1000000000 iterations computed)
+The computation took 5.76874s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14165 (1000000000 iterations computed)
+The computation took 5.7608s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14159 (1000000000 iterations computed)
+The computation took 5.75226s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.14157 (1000000000 iterations computed)
+The computation took 5.7627s
+Computing PI with Montecarlo method!
+Number of iterations: 1000000000
+PI = 3.1416 (1000000000 iterations computed)
+The computation took 6.01759s
