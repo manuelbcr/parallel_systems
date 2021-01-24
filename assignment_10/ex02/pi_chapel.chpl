@@ -47,8 +47,8 @@ coforall l in 1..(numLocales){
 
 // reduce results
 var inliers : int = 0;
-for i in 1..thread_count do
-  inliers += inlier_counts[i];
+for i in 1..numLocales do
+  inliers += inlier_counts_of_locales[i];
 
 var approximated_pi = (inliers*4.0)/N;
 stopwatch.stop();
